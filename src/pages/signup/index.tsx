@@ -8,7 +8,6 @@ import MarkunreadIcon from "@mui/icons-material/Markunread";
 import { Stack, Typography } from "@mui/material";
 import Grow from "@mui/material/Grow";
 import React from "react";
-import "./style.css";
 
 const LoginPage = () => {
     const [email, setEmail] = React.useState<string>("");
