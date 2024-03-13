@@ -15,7 +15,7 @@ interface MenuProps {
     menuItems: string[];
 }
 
-const MenuBar: React.FC<any> = ({ menuName, menuItems}) => {
+const MenuBar = ({ menuName, menuItems}: any) => {
     const router: any = useRouter();
     const anchorRef = useRef<HTMLButtonElement>(null);
     const [open, setOpen] = useState<boolean>(false);
