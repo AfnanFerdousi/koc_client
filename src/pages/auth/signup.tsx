@@ -14,6 +14,15 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
+interface ApiResponse {
+  payload: any;
+  statusCode: number;
+}
+interface LoadingState {
+  signup: boolean;
+  resendEmail: boolean;
+}
+
 const SignupPage = () => {
   const [email, setEmail] = React.useState<string>("");
   const [firstName, setFirstName] = React.useState<string>("");
@@ -24,6 +33,10 @@ const SignupPage = () => {
   const [state, setState] = React.useState<string>("signup");
   const [showResendButton, setShowResendButton] = React.useState<boolean>(true);
   const [timer, setTimer] = React.useState<number>(60);
+  const [loading, setLoading] = React.useState<LoadingState>({
+    signup: false,
+    resendEmail: false,
+  });
   const dispatch = useDispatch();
   const handlePwd = (value: string) => {
     setPassword(value);
@@ -57,9 +70,9 @@ const SignupPage = () => {
       email,
       password,
     };
-
+    setLoading({ ...loading, signup: true }); // Start loading for signup
     try {
-      const response = await dispatch(registerUser(userData));
+      const response: ApiResponse = await dispatch(registerUser(userData));
       console.log("response here", response);
       if (
         response.payload.statusCode === 200 ||
@@ -70,13 +83,17 @@ const SignupPage = () => {
       }
     } catch (error) {
       console.error("Registration failed:", error);
+    } finally {
+      setLoading({ ...loading, signup: false }); // Stop loading for signup
     }
   };
+
   const handleResendEmail = async () => {
     setShowResendButton(false);
     setTimer(60);
+    setLoading({ ...loading, resendEmail: true }); // Start loading for resend email
     try {
-      const response = await dispatch(resendEmail(email));
+      const response: ApiResponse = await dispatch(resendEmail(email));
       console.log("response here", response);
       if (
         response.payload.statusCode === 200 ||
@@ -85,7 +102,9 @@ const SignupPage = () => {
         toast.success("Email sent successfully!");
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error("Resend email failed:", error);
+    } finally {
+      setLoading({ ...loading, resendEmail: false }); // Stop loading for resend email
     }
   };
   React.useEffect(() => {
@@ -124,7 +143,7 @@ const SignupPage = () => {
       <Grow in={true}>
         <Stack direction="row" justifyContent="center">
           {state === "signup" && (
-            <div className="register-wrap">
+            <div className="register-wrap rounded-none md:rounded-[10px]">
               <h4 className="auth-title">Kayıt Ol</h4>
               <Stack direction="row" justifyContent="center">
                 <Stack sx={{ width: "80%" }}>
@@ -166,9 +185,15 @@ const SignupPage = () => {
                 </Stack>
               </Stack>
               <Stack direction="row" justifyContent="center">
-                <div className="btn" onClick={handleSignup}>
-                  Kayıt Ol
-                </div>
+                {loading.signup ? (
+                  <div className="btn !cursor-context-menu !px-16 hover:bg-[#ffeaa7af]">
+                    <div className="loaderAuth mx-auto"></div>{" "}
+                  </div>
+                ) : (
+                  <div className="btn" onClick={handleSignup}>
+                    Kayıt Ol
+                  </div>
+                )}
               </Stack>
               <Stack direction="row" justifyContent="center" alignSelf="center">
                 <Typography sx={{ color: "#c4c3ca" }}>
@@ -203,7 +228,7 @@ const SignupPage = () => {
                 </Typography>
                 <br />
                 <Typography sx={{ color: "#c4c3ca" }}>
-                  Didn't receive an email?{" "}
+                  Didn&apos;t receive an email?{" "}
                   {showResendButton ? (
                     <span
                       className="auth-change-btn cursor-pointer"
@@ -220,7 +245,7 @@ const SignupPage = () => {
           ) : state === "loggedIn" ? (
             <div className="reset-wrap">
               <Stack direction="row" justifyContent="start" alignItems="center">
-                <h4 className="auth-title">There's nothing here</h4>
+                <h4 className="auth-title">There&apos;s nothing here</h4>
               </Stack>
               <Stack
                 direction="column"

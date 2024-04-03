@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./authReducer";
+import authReducer from "./reducers/authReducer";
+import experienceSlice from "./reducers/experienceSlice";
+import jobSlice from "./reducers/jobSlice";
 // import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    experience : experienceSlice,
+    jobs : jobSlice
   },
 });
 

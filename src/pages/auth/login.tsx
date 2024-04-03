@@ -7,8 +7,20 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grow from "@mui/material/Grow";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-import { forgetPassword, loginUser, resendEmail } from "@/axios/axios";
+import { useDispatch } from "react-redux";
+import {
+  forgetPassword,
+  getProfile,
+  loginUser,
+  resendEmail,
+} from "@/axios/axios";
+import toast from "react-hot-toast";
+
+interface LoadingState {
+  login: boolean;
+  forgetPassword: boolean;
+  resendEmail: boolean;
+}
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -17,6 +29,11 @@ const LoginPage = () => {
   const [state, setState] = React.useState<string>("login");
   const [showResendButton, setShowResendButton] = React.useState<boolean>(true);
   const [timer, setTimer] = React.useState<number>(60);
+  const [loading, setLoading] = React.useState<LoadingState>({
+    login: false,
+    forgetPassword: false,
+    resendEmail: false,
+  });
   const router = useRouter();
   const handlePwd = (value: string) => {
     setPassword(value);
@@ -30,33 +47,47 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     const userData = { email: value, password };
+    setLoading({ ...loading, login: true }); // Start loading
+
     try {
       const response = await dispatch(loginUser(userData));
+
+      // Handle the response when the action is fulfilled
       if (
         response.payload.statusCode === 200 ||
         response.payload.statusCode === 201
       ) {
+        setLoading({ ...loading, login: false }); // Stop loading
         router.push("/");
+        dispatch(getProfile());
       } else if (response.payload.message === "Verify your email!") {
+        setLoading({ ...loading, login: false }); // Stop loading
         setState("verify");
         dispatch(resendEmail(userData.email));
       }
     } catch (error) {
+      setLoading({ ...loading, login: false }); // Stop loading
       console.error("Login failed:", error);
     }
   };
+  console.log("im loading", loading);
   const handleForgetPassword = async () => {
+    setLoading({ ...loading, forgetPassword: true }); // Start loading for forget password
     try {
       await dispatch(forgetPassword(value));
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Forget password failed:", error);
+    } finally {
+      setLoading({ ...loading, forgetPassword: false }); // Stop loading for forget password
     }
   };
+
   const handleResendEmail = async () => {
     setShowResendButton(false);
     setTimer(60);
+    setLoading({ ...loading, resendEmail: true }); // Start loading for resend email
     try {
-      const response = await dispatch(resendEmail(email));
+      const response = await dispatch(resendEmail(value));
       console.log("response here", response);
       if (
         response.payload.statusCode === 200 ||
@@ -65,9 +96,12 @@ const LoginPage = () => {
         toast.success("Email sent successfully!");
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error("Resend email failed:", error);
+    } finally {
+      setLoading({ ...loading, resendEmail: false }); // Stop loading for resend email
     }
   };
+
   React.useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
@@ -133,9 +167,15 @@ const LoginPage = () => {
                 </div>
               </Stack>
               <Stack direction="row" justifyContent="center">
-                <div className="btn" onClick={handleLogin}>
-                  GİRİŞ YAP
-                </div>
+                {loading.login ? (
+                  <div className="btn !cursor-context-menu !px-16 hover:bg-[#ffeaa7af]">
+                    <div className="loaderAuth mx-auto"></div>{" "}
+                  </div>
+                ) : (
+                  <button className="btn " onClick={handleLogin}>
+                    <p>GİRİŞ YAP</p>{" "}
+                  </button>
+                )}
               </Stack>
               <Stack direction="row" justifyContent="center" alignSelf="center">
                 <Typography sx={{ color: "#c4c3ca" }}>
@@ -174,7 +214,7 @@ const LoginPage = () => {
                   </Typography>
                   <br />
                   <Typography sx={{ color: "#c4c3ca" }}>
-                    Didn't receive an email?{" "}
+                    Didn&apos;t receive an email?{" "}
                     {showResendButton ? (
                       <span
                         className="auth-change-btn cursor-pointer"
@@ -214,9 +254,15 @@ const LoginPage = () => {
                 </Stack>
               </Stack>
               <Stack direction="row" justifyContent="center">
-                <div className="btn" onClick={handleForgetPassword}>
-                  Sonraki
-                </div>
+                {loading.forgetPassword ? (
+                  <div className="btn !cursor-context-menu !px-16 hover:bg-[#ffeaa7af]">
+                    <div className="loaderAuth mx-auto"></div>{" "}
+                  </div>
+                ) : (
+                  <button className="btn" onClick={handleForgetPassword}>
+                    Sonraki
+                  </button>
+                )}
               </Stack>
             </div>
           ) : (
@@ -227,7 +273,7 @@ const LoginPage = () => {
                   justifyContent="start"
                   alignItems="center"
                 >
-                  <h4 className="auth-title">There's nothing here</h4>
+                  <h4 className="auth-title">There&apos;s nothing here</h4>
                 </Stack>
                 <Stack
                   direction="column"

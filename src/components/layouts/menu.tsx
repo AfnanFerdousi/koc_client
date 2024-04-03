@@ -13,6 +13,23 @@ import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { useSelector } from "react-redux";
+
+interface User {
+  first_name: string;
+  lastName: string;
+  // Add other properties as needed
+}
+
+interface RootState {
+  state: User | undefined;
+  auth: {
+    data: {
+      user: User | undefined; // User or undefined, depending on whether it's loaded
+      // Add other properties if present in your Redux state
+    };
+  };
+}
 
 const AccountMenu = () => {
   const [open, setOpen] = React.useState(false);
@@ -33,12 +50,13 @@ const AccountMenu = () => {
     setOpen(false);
   };
   const handleProfile = (e: Event | React.SyntheticEvent) => {
-    router.push(`/profile`, { scroll: false });
+    router.push(`/profile/me`, { scroll: false });
     handleClose(e);
   };
   const handleLogout = (event: Event | React.SyntheticEvent) => {
     handleClose(event);
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
     router.refresh();
   };
 
@@ -60,6 +78,7 @@ const AccountMenu = () => {
 
     prevOpen.current = open;
   }, [open]);
+  const userProfile: any = useSelector((state: RootState) => state.auth?.data);
 
   return (
     <Stack direction="row" spacing={2}>
@@ -72,7 +91,30 @@ const AccountMenu = () => {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Avatar sx={{ width: 32, height: 32 }}>Y</Avatar>
+          {userProfile?.user?.profile_picture ? (
+            <div className="w-[32px] h-[32px] border rounded-full ">
+              <img
+                src={userProfile?.user?.profile_picture}
+                // width={32}
+                // height={32}
+                alt="profile picture"
+                className="object-cover rounded-full w-full h-full"
+              />
+            </div>
+          ) : (
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                backgroundColor: "#35B900",
+                color: "white",
+                fontSize: 16,
+              }}
+            >
+              {(userProfile?.user?.first_name?.slice(0, 1) ?? "") +
+                (userProfile?.user?.lastName?.slice(0, 1) ?? "")}
+            </Avatar>
+          )}
         </IconButton>
         <Popper
           open={open}
