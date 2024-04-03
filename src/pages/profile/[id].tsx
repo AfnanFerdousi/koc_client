@@ -427,7 +427,7 @@ export default function Profile() {
                                 >
                               | Iterable<React.ReactNode>
                               | React.ReactPortal
-                              | Promise<React.AwaitedReactNode>
+                              // | Promise<React.AwaitedReactNode>
                               | null
                               | undefined;
                           },
@@ -494,7 +494,7 @@ export default function Profile() {
                                 >
                               | Iterable<React.ReactNode>
                               | React.ReactPortal
-                              | Promise<React.AwaitedReactNode>
+                              // | Promise<React.AwaitedReactNode>
                               | null
                               | undefined;
                           },

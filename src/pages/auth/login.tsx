@@ -7,19 +7,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grow from "@mui/material/Grow";
 import Link from "next/link";
 import { useRouter } from "next/router";
-<<<<<<<< HEAD:src/pages/auth/login/index.jsx
-import { useDispatch, useSelector } from "react-redux";
-import { forgetPassword, loginUser, resendEmail } from "@/axios/axios";
-import { toast } from "react-toastify";
-
-const LoginPage = () => {
-  const dispatch = useDispatch();
-  const [value, setValue] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [state, setState] = React.useState("login");
-  const [showResendButton, setShowResendButton] = React.useState(true);
-  const [timer, setTimer] = React.useState(60);
-========
 import { useDispatch } from "react-redux";
 import {
   forgetPassword,
@@ -47,15 +34,14 @@ const LoginPage = () => {
     forgetPassword: false,
     resendEmail: false,
   });
->>>>>>>> ae451eaec40300209c4dba8c8a67a19498f04106:src/pages/auth/login.tsx
   const router = useRouter();
-  const handlePwd = (value) => {
+  const handlePwd = (value: any) => {
     setPassword(value);
   };
-  const handleChange = (value) => {
+  const handleChange = (value: any) => {
     setValue(value);
   };
-  const handleClick = (value) => {
+  const handleClick = (value: any) => {
     setState(value);
   };
 
@@ -64,13 +50,8 @@ const LoginPage = () => {
     setLoading({ ...loading, login: true }); // Start loading
 
     try {
-<<<<<<<< HEAD:src/pages/auth/login/index.jsx
-      const response = dispatch(loginUser(userData));
-========
       const response = await dispatch(loginUser(userData));
 
-      // Handle the response when the action is fulfilled
->>>>>>>> ae451eaec40300209c4dba8c8a67a19498f04106:src/pages/auth/login.tsx
       if (
         response.payload.statusCode === 200 ||
         response.payload.statusCode === 201
@@ -105,11 +86,7 @@ const LoginPage = () => {
     setTimer(60);
     setLoading({ ...loading, resendEmail: true }); // Start loading for resend email
     try {
-<<<<<<<< HEAD:src/pages/auth/login/index.jsx
-      const response = dispatch(resendEmail(email));
-========
       const response = await dispatch(resendEmail(value));
->>>>>>>> ae451eaec40300209c4dba8c8a67a19498f04106:src/pages/auth/login.tsx
       console.log("response here", response);
       if (
         response.payload.statusCode === 200 ||
@@ -125,7 +102,7 @@ const LoginPage = () => {
   };
 
   React.useEffect(() => {
-    let intervalId;
+    let intervalId: any;
 
     // Start the countdown timer
     if (!showResendButton) {

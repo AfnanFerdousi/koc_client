@@ -14,13 +14,6 @@ interface LoadingState {
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-<<<<<<<< HEAD:src/pages/auth/forget/index.jsx
-  const [state, setState] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [queryToken, setQueryToken] = React.useState("");
-========
   const [state, setState] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [confirmPassword, setConfirmPassword] = React.useState<string>("");
@@ -29,7 +22,6 @@ const LoginPage = () => {
   const [loading, setLoading] = React.useState<LoadingState>({
     resetPassword: false,
   });
->>>>>>>> ae451eaec40300209c4dba8c8a67a19498f04106:src/pages/auth/forget.tsx
   const router = useRouter();
   React.useEffect(() => {
     const { token } = router.query;
@@ -38,7 +30,7 @@ const LoginPage = () => {
       setState("reset");
     }
   }, [router.query]);
-  const handlePwd = (value) => {
+  const handlePwd = (value: any) => {
     setPassword(value);
     if (value.length < 6) {
       setPasswordError(true);
@@ -46,7 +38,7 @@ const LoginPage = () => {
       setPasswordError(false);
     }
   };
-  const handleConfirmPwd = (value) => {
+  const handleConfirmPwd = (value: any) => {
     setConfirmPassword(value);
   };
   const handleReset = async () => {

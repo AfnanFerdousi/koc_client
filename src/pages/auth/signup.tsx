@@ -22,17 +22,6 @@ interface LoadingState {
 }
 
 const SignupPage = () => {
-<<<<<<<< HEAD:src/pages/auth/signup/index.jsx
-  const [email, setEmail] = React.useState("");
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [telNum, setTelNum] = React.useState("");
-  const [state, setState] = React.useState("signup");
-  const [showResendButton, setShowResendButton] = React.useState(true);
-  const [timer, setTimer] = React.useState(60);
-========
   const [email, setEmail] = React.useState<string>("");
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
@@ -46,9 +35,8 @@ const SignupPage = () => {
     signup: false,
     resendEmail: false,
   });
->>>>>>>> ae451eaec40300209c4dba8c8a67a19498f04106:src/pages/auth/signup.tsx
   const dispatch = useDispatch();
-  const handlePwd = (value) => {
+  const handlePwd = (value: any) => {
     setPassword(value);
     if (value.length < 6) {
       setPasswordError(true);
@@ -56,19 +44,19 @@ const SignupPage = () => {
       setPasswordError(false);
     }
   };
-  const handleChange = (value) => {
+  const handleChange = (value: any) => {
     setEmail(value);
   };
-  const handleChangeFirstName = (value) => {
+  const handleChangeFirstName = (value: any) => {
     setFirstName(value);
   };
-  const handleChangeLastName = (value) => {
+  const handleChangeLastName = (value: any) => {
     setLastName(value);
   };
-  const handleChangeNumber = (value) => {
+  const handleChangeNumber = (value: any) => {
     setTelNum(value);
   };
-  const handleClick = (value) => {
+  const handleClick = (value: any) => {
     setState(value);
   };
   const handleSignup = async () => {
@@ -118,7 +106,7 @@ const SignupPage = () => {
     }
   };
   React.useEffect(() => {
-    let intervalId;
+    let intervalId: any;
 
     // Start the countdown timer
     if (!showResendButton) {
