@@ -1,5 +1,3 @@
-"use client";
-
 import { registerUser, resendEmail } from "@/axios/axios";
 import PasswordField from "@/components/form/passwordField";
 import StartAodornmentField from "@/components/form/startAodornmentField";
@@ -15,17 +13,17 @@ import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
 const SignupPage = () => {
-  const [email, setEmail] = React.useState<string>("");
-  const [firstName, setFirstName] = React.useState<string>("");
-  const [lastName, setLastName] = React.useState<string>("");
-  const [password, setPassword] = React.useState<string>("");
-  const [passwordError, setPasswordError] = React.useState<boolean>(false);
-  const [telNum, setTelNum] = React.useState<string>("");
-  const [state, setState] = React.useState<string>("signup");
-  const [showResendButton, setShowResendButton] = React.useState<boolean>(true);
-  const [timer, setTimer] = React.useState<number>(60);
+  const [email, setEmail] = React.useState("");
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [telNum, setTelNum] = React.useState("");
+  const [state, setState] = React.useState("signup");
+  const [showResendButton, setShowResendButton] = React.useState(true);
+  const [timer, setTimer] = React.useState(60);
   const dispatch = useDispatch();
-  const handlePwd = (value: string) => {
+  const handlePwd = (value) => {
     setPassword(value);
     if (value.length < 6) {
       setPasswordError(true);
@@ -33,19 +31,19 @@ const SignupPage = () => {
       setPasswordError(false);
     }
   };
-  const handleChange = (value: string) => {
+  const handleChange = (value) => {
     setEmail(value);
   };
-  const handleChangeFirstName = (value: string) => {
+  const handleChangeFirstName = (value) => {
     setFirstName(value);
   };
-  const handleChangeLastName = (value: string) => {
+  const handleChangeLastName = (value) => {
     setLastName(value);
   };
-  const handleChangeNumber = (value: string) => {
+  const handleChangeNumber = (value) => {
     setTelNum(value);
   };
-  const handleClick = (value: string) => {
+  const handleClick = (value) => {
     setState(value);
   };
   const handleSignup = async () => {
@@ -89,7 +87,7 @@ const SignupPage = () => {
     }
   };
   React.useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+    let intervalId;
 
     // Start the countdown timer
     if (!showResendButton) {

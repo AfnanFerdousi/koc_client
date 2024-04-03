@@ -9,29 +9,30 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { forgetPassword, loginUser, resendEmail } from "@/axios/axios";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [value, setValue] = React.useState<string>("");
-  const [password, setPassword] = React.useState<string>("");
-  const [state, setState] = React.useState<string>("login");
-  const [showResendButton, setShowResendButton] = React.useState<boolean>(true);
-  const [timer, setTimer] = React.useState<number>(60);
+  const [value, setValue] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [state, setState] = React.useState("login");
+  const [showResendButton, setShowResendButton] = React.useState(true);
+  const [timer, setTimer] = React.useState(60);
   const router = useRouter();
-  const handlePwd = (value: string) => {
+  const handlePwd = (value) => {
     setPassword(value);
   };
-  const handleChange = (value: string) => {
+  const handleChange = (value) => {
     setValue(value);
   };
-  const handleClick = (value: string) => {
+  const handleClick = (value) => {
     setState(value);
   };
 
   const handleLogin = async () => {
     const userData = { email: value, password };
     try {
-      const response = await dispatch(loginUser(userData));
+      const response = dispatch(loginUser(userData));
       if (
         response.payload.statusCode === 200 ||
         response.payload.statusCode === 201
@@ -47,7 +48,7 @@ const LoginPage = () => {
   };
   const handleForgetPassword = async () => {
     try {
-      await dispatch(forgetPassword(value));
+      dispatch(forgetPassword(value));
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -56,7 +57,7 @@ const LoginPage = () => {
     setShowResendButton(false);
     setTimer(60);
     try {
-      const response = await dispatch(resendEmail(email));
+      const response = dispatch(resendEmail(email));
       console.log("response here", response);
       if (
         response.payload.statusCode === 200 ||
@@ -69,7 +70,7 @@ const LoginPage = () => {
     }
   };
   React.useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+    let intervalId;
 
     // Start the countdown timer
     if (!showResendButton) {

@@ -9,7 +9,7 @@ import { Stack, Typography } from "@mui/material";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [state, setState] = React.useState<string>("");
+  const [state, setState] = React.useState("");
   const router = useRouter();
 
   React.useEffect(() => {

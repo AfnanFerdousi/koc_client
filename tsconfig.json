@@ -27,6 +27,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/axios/axios.js"
-  ],
+, "src/pages/auth/login/index.jsx", "src/pages/auth/signup/index.jsx", "src/pages/auth/forget/index.jsx", "src/pages/auth/verify/index.jsx"  ],
   "exclude": ["node_modules"]
 }

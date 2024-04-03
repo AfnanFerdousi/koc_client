@@ -11,11 +11,11 @@ import PasswordField from "@/components/form/passwordField";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [state, setState] = React.useState<string>("");
-  const [password, setPassword] = React.useState<string>("");
-  const [confirmPassword, setConfirmPassword] = React.useState<string>("");
-  const [passwordError, setPasswordError] = React.useState<boolean>(false);
-  const [queryToken, setQueryToken] = React.useState<any>("");
+  const [state, setState] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [queryToken, setQueryToken] = React.useState("");
   const router = useRouter();
   React.useEffect(() => {
     const { token } = router.query;
@@ -24,7 +24,7 @@ const LoginPage = () => {
       setState("reset");
     }
   }, [router.query]);
-  const handlePwd = (value: string) => {
+  const handlePwd = (value) => {
     setPassword(value);
     if (value.length < 6) {
       setPasswordError(true);
@@ -32,7 +32,7 @@ const LoginPage = () => {
       setPasswordError(false);
     }
   };
-  const handleConfirmPwd = (value: string) => {
+  const handleConfirmPwd = (value) => {
     setConfirmPassword(value);
   };
   const handleReset = async () => {
