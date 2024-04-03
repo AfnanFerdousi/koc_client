@@ -788,42 +788,220 @@ input:-webkit-autofill:active {
 .auth-change-btn:hover {
   text-decoration: underline;
 }
-/* .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: transparent !important;
-}
-.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
-    border-color: transparent !important;
-  }
-  
-  .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: transparent !important;
-  } */
 
-.search-btn {
-  height: 40px;
-  background-color: rgb(53, 185, 0);
-  cursor: pointer;
-  padding: 8px 10px;
-  color: white;
+.loader {
+  --ballcolor: #35b900;
+  --shadow: 0px 0 #114d2900;
+  --shadowcolor: #114d2900;
+  width: 10px;
+  height: 10px;
+  left: -120px;
+  border-radius: 50%;
+  position: relative;
+  color: var(--ballcolor);
+  animation: shadowRolling 1.25s linear infinite;
 }
-.search {
-  display: flex;
-  border: transparent;
-  height: 40px;
-  font-size: 15px;
-  margin-left: 5px;
+
+@keyframes shadowRolling {
+  0% {
+    box-shadow: var(--shadow), var(--shadow), var(--shadow), var(--shadow);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--ballcolor), var(--shadow), var(--shadow),
+      var(--shadow);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--ballcolor), 100px 0 var(--ballcolor),
+      var(--shadow), var(--shadow);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--ballcolor), 110px 0 var(--ballcolor),
+      100px 0 var(--ballcolor), var(--shadow);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--ballcolor), 120px 0 var(--ballcolor),
+      110px 0 var(--ballcolor), 100px 0 var(--ballcolor);
+  }
+
+  62% {
+    box-shadow: 200px 0 var(--shadowcolor), 130px 0 var(--ballcolor),
+      120px 0 var(--ballcolor), 110px 0 var(--ballcolor);
+  }
+
+  75% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      130px 0 var(--ballcolor), 120px 0 var(--ballcolor);
+  }
+
+  87% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      200px 0 var(--shadowcolor), 130px 0 var(--ballcolor);
+  }
+
+  100% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor);
+  }
 }
-.search:focus-visible {
-  outline: none !important;
+.loaderAuth {
+  --ballcolor: #2b2e38;
+  --shadow: 0px 0 #114d2900;
+  --shadowcolor: #114d2900;
+  width: 10px;
+  height: 10px;
+  left: -120px;
+  border-radius: 50%;
+  position: relative;
+  color: var(--ballcolor);
+  animation: shadowRollingAuth 1.25s linear infinite;
 }
-.search:focus {
-  border: none !important;
+
+@keyframes shadowRollingAuth {
+  0% {
+    box-shadow: var(--shadow), var(--shadow), var(--shadow), var(--shadow);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--ballcolor), var(--shadow), var(--shadow),
+      var(--shadow);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--ballcolor), 100px 0 var(--ballcolor),
+      var(--shadow), var(--shadow);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--ballcolor), 110px 0 var(--ballcolor),
+      100px 0 var(--ballcolor), var(--shadow);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--ballcolor), 120px 0 var(--ballcolor),
+      110px 0 var(--ballcolor), 100px 0 var(--ballcolor);
+  }
+
+  62% {
+    box-shadow: 200px 0 var(--shadowcolor), 130px 0 var(--ballcolor),
+      120px 0 var(--ballcolor), 110px 0 var(--ballcolor);
+  }
+
+  75% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      130px 0 var(--ballcolor), 120px 0 var(--ballcolor);
+  }
+
+  87% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      200px 0 var(--shadowcolor), 130px 0 var(--ballcolor);
+  }
+
+  100% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor);
+  }
 }
-.search-box {
-  display: flex;
-  background-color: white;
-  align-items: center;
-  width: 200px;
-  height: 40px;
-  padding-left: 5px;
+.loaderProfile {
+  --ballcolor: #fff;
+  --shadow: 0px 0 #114d2900;
+  --shadowcolor: #114d2900;
+  width: 10px;
+  height: 10px;
+  left: -120px;
+  border-radius: 50%;
+  position: relative;
+  color: var(--ballcolor);
+  animation: shadowRollingProfile 1.25s linear infinite;
+}
+
+@keyframes shadowRollingProfile {
+  0% {
+    box-shadow: var(--shadow), var(--shadow), var(--shadow), var(--shadow);
+  }
+
+  12% {
+    box-shadow: 100px 0 var(--ballcolor), var(--shadow), var(--shadow),
+      var(--shadow);
+  }
+
+  25% {
+    box-shadow: 110px 0 var(--ballcolor), 100px 0 var(--ballcolor),
+      var(--shadow), var(--shadow);
+  }
+
+  36% {
+    box-shadow: 120px 0 var(--ballcolor), 110px 0 var(--ballcolor),
+      100px 0 var(--ballcolor), var(--shadow);
+  }
+
+  50% {
+    box-shadow: 130px 0 var(--ballcolor), 120px 0 var(--ballcolor),
+      110px 0 var(--ballcolor), 100px 0 var(--ballcolor);
+  }
+
+  62% {
+    box-shadow: 200px 0 var(--shadowcolor), 130px 0 var(--ballcolor),
+      120px 0 var(--ballcolor), 110px 0 var(--ballcolor);
+  }
+
+  75% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      130px 0 var(--ballcolor), 120px 0 var(--ballcolor);
+  }
+
+  87% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      200px 0 var(--shadowcolor), 130px 0 var(--ballcolor);
+  }
+
+  100% {
+    box-shadow: 200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor),
+      200px 0 var(--shadowcolor), 200px 0 var(--shadowcolor);
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  /* Adjustments for medium devices */
+  .auth-title {
+    margin: 20px;
+    font-size: 25px;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  /* Adjustments for small devices */
+  .auth-title {
+    margin: 10px;
+    font-size: 20px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  /* Adjustments for medium devices */
+  .reset-wrap,
+  .center-wrap,
+  .register-wrap {
+    width: auto; /* Set width to auto to allow it to expand */
+    max-width: calc(100% - 40px); /* Adjusting for padding */
+    height: auto; /* Allow height to adjust according to content */
+    padding: 20px; /* Adjust padding */
+    border-radius: 8px;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  /* Adjustments for small devices */
+  .reset-wrap,
+  .center-wrap,
+  .register-wrap {
+    width: auto; /* Set width to auto to allow it to expand */
+    max-width: calc(100% - 10px); /* Adjusting for padding */
+    height: auto; /* Allow height to adjust according to content */
+    padding: 10px; /* Adjust padding */
+    border-radius: 6px;
+  }
 }

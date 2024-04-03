@@ -6,16 +6,22 @@ import { useDispatch } from "react-redux";
 import { resetPassword } from "@/axios/axios";
 import toast from "react-hot-toast";
 import { Stack, Typography } from "@mui/material";
-import StartAodornmentField from "@/components/form/startAodornmentField";
 import PasswordField from "@/components/form/passwordField";
+
+interface LoadingState {
+  resetPassword: boolean;
+}
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [state, setState] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [queryToken, setQueryToken] = React.useState("");
+  const [state, setState] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
+  const [confirmPassword, setConfirmPassword] = React.useState<string>("");
+  const [passwordError, setPasswordError] = React.useState<boolean>(false);
+  const [queryToken, setQueryToken] = React.useState<any>("");
+  const [loading, setLoading] = React.useState<LoadingState>({
+    resetPassword: false,
+  });
   const router = useRouter();
   React.useEffect(() => {
     const { token } = router.query;
@@ -24,7 +30,7 @@ const LoginPage = () => {
       setState("reset");
     }
   }, [router.query]);
-  const handlePwd = (value) => {
+  const handlePwd = (value: any) => {
     setPassword(value);
     if (value.length < 6) {
       setPasswordError(true);
@@ -32,7 +38,7 @@ const LoginPage = () => {
       setPasswordError(false);
     }
   };
-  const handleConfirmPwd = (value) => {
+  const handleConfirmPwd = (value: any) => {
     setConfirmPassword(value);
   };
   const handleReset = async () => {
@@ -40,6 +46,7 @@ const LoginPage = () => {
       password,
       confirmPassword,
     };
+    setLoading({ ...loading, resetPassword: true }); // Start loading for reset password
     try {
       const response = await dispatch(
         resetPassword({ token: queryToken, passwordData })
@@ -53,6 +60,8 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error("Reset password failed:", error);
+    } finally {
+      setLoading({ ...loading, resetPassword: false }); // Stop loading for reset password
     }
   };
 
@@ -65,7 +74,7 @@ const LoginPage = () => {
     >
       <Grow in={true}>
         <Stack direction="row" justifyContent="center">
-          {state === "reset" ? (
+          {state === "reset" && (
             <div className="center-wrap">
               <h4 className="auth-title">Reset Your Password</h4>
               <Stack direction="row" justifyContent="center">
@@ -87,13 +96,17 @@ const LoginPage = () => {
                 </Stack>
               </Stack>
               <Stack direction="row" justifyContent="center">
-                <div className="btn" onClick={handleReset}>
-                  Reset Password
-                </div>
+                {loading.resetPassword ? (
+                  <div className="btn !cursor-context-menu !px-16 hover:bg-[#ffeaa7af]">
+                    <div className="loaderAuth mx-auto"></div>{" "}
+                  </div>
+                ) : (
+                  <div className="btn" onClick={handleReset}>
+                    Reset Password
+                  </div>
+                )}
               </Stack>
             </div>
-          ) : (
-            ""
           )}
         </Stack>
       </Grow>
