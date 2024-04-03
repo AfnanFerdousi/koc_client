@@ -44,8 +44,8 @@ const Navbar: React.FC<any> = () => {
                 <AccountMenu setIsAuthenticated={setIsAuthenticated} />
             ) : (
                 <div className="btn-group">
-                    <a className="login-btn">Giriş</a>
-                    <a className="signup-btn">Kayıt</a>
+                    <Link href="/login" className="login-btn">Giriş</Link>
+                    <Link href="/signup" className="signup-btn">Kayıt</Link>
                 </div>
             )}
         </div>
