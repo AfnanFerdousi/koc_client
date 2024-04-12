@@ -72,7 +72,7 @@
   transform: translateX(8px);
 }
 
-form {
+.form {
   background: #fff;
   width: 600px;
   height: 55px;
@@ -80,7 +80,7 @@ form {
   border-radius: 6px;
 }
 
-form input {
+.form input {
   flex: 1;
   border: none;
   outline: none;
