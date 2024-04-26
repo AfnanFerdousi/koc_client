@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children }) => {
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    if (token) {
+    if (!token) {
       router.push("/auth/login");
     }
   }, [router]);
