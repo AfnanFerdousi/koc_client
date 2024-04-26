@@ -19,6 +19,8 @@ import ProfileHeader from "../../components/profile/ProfileHeader";
 import LeftSideBar from "../../components/profile/LeftSideBar";
 import MainContent from "../../components/profile/MainContent";
 import Experiences from "../../components/profile/Experiences";
+import ProtectedRoute from "../../components/layouts/ProtectedRoute";
+import NotFound from "../404";
 
 export default function Profile() {
   // Next.js router
@@ -53,31 +55,34 @@ export default function Profile() {
       document.title = `${profileData.user.first_name} ${profileData.user.lastName} | Profile`;
     }
   }, [profileData]);
-
   return (
-    <div>
+    <ProtectedRoute>
       <Navbar />
       {isLoading ? (
         <div className="border rounded-3xl max-w-screen-xl flex items-center justify-center h-[80vh] mt-28 mb-14 mx-auto">
           <div className="loader"></div>
         </div>
+      ) : !profileData ? (
+        <NotFound />
       ) : (
-        <div className="border rounded-3xl max-w-screen-xl mt-28 mx-auto">
-          <ProfileHeader
-            isMine={false}
-            userProfile={profileData}
-            isLoading={isLoading}
-          />
-          <div className="grid grid-cols-3">
-            {" "}
-            <LeftSideBar isMine={false} userProfile={profileData} />
-            <MainContent isMine={false} userProfile={profileData} />
+        <>
+          <div className="border rounded-3xl max-w-screen-xl mt-28 mx-auto">
+            <ProfileHeader
+              isMine={false}
+              userProfile={profileData}
+              isLoading={isLoading}
+            />
+            <div className="grid grid-cols-3">
+              {" "}
+              <LeftSideBar isMine={false} userProfile={profileData} />
+              <MainContent isMine={false} userProfile={profileData} />
+            </div>
           </div>
-        </div>
+          <Experiences isMine={false} userProfile={profileData} />
+        </>
       )}
-      <Experiences isMine={false} userProfile={profileData} />
 
       <Footer />
-    </div>
+    </ProtectedRoute>
   );
 }

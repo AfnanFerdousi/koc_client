@@ -90,18 +90,20 @@ export default asyncThunkCreator;
 export const registerUser = asyncThunkCreator(
   "auth/registerUser",
   "/user/register",
-  "post"
+  "post",
+  "Registered successfully!"
 );
 export const loginUser = asyncThunkCreator(
   "auth/loginUser",
   "/auth/login",
   "post",
-  "Logged In Successfully!"
+  "Logged in successfully!"
 );
 export const resendEmail = asyncThunkCreator(
   "auth/resendEmail",
   "/auth/resendEmail/{email}",
-  "post"
+  "post",
+  "Email sent successfully!"
 );
 export const forgetPassword = asyncThunkCreator(
   "auth/forgetPassword",
@@ -112,7 +114,8 @@ export const forgetPassword = asyncThunkCreator(
 export const resetPassword = asyncThunkCreator(
   "auth/resetPassword",
   "/auth/resetPassword/{token}",
-  "patch"
+  "patch",
+  "Password reset was successful!"
 );
 export const verifyEmail = asyncThunkCreator(
   "auth/verifyEmail",
@@ -132,7 +135,7 @@ export const getProfile = createAsyncThunk(
       }
       const response = await axiosInstance.get(
         `${baseURL}/profile/${userId}`,
-        config
+        configCT
       );
       dispatch(setUserData(response.data));
       return response.data;
@@ -163,6 +166,12 @@ export const editInfo = asyncThunkCreator(
 export const editProfile = asyncThunkCreator(
   "user/editInfoData",
   "/user/{userId}",
+  "patch",
+  "Successfully done!"
+);
+export const editSettings = asyncThunkCreator(
+  "user/editInfoData",
+  "/misc/profile/{userId}",
   "patch",
   "Successfully done!"
 );
@@ -247,13 +256,62 @@ export const deleteEducation = asyncThunkCreator(
   "Education Deleted Successfully!"
 );
 
-// Async thunk action creators for job-related actions
-export const getJobs = createAsyncThunk(
-  "job/fetchJobData",
-  async (search, thunkAPI) => {
+// Async thunk action creators for job-related actionse
+export const getJobById = createAsyncThunk(
+  "job/fetchJobById",
+  async ({ jobId, userId, sort }, thunkAPI) => {
     try {
       const response = await Axios.get(
-        `${baseURL}/offer?searchTerm=${search}`,
+        `${baseURL}/offer/specific/${jobId}/${userId}?proposalSort=${sort}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getJobs = createAsyncThunk(
+  "job/fetchJobData",
+  async (
+    {
+      user_id,
+      minBudget = "",
+      maxBudget = "",
+      size = "",
+      sortOrder = "",
+      sortBy = "",
+    },
+    thunkAPI
+  ) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/offer/${user_id}?minBudget=${minBudget}&maxBudget=${maxBudget}&project_size=${size}&sortOrder=${sortOrder}&sortBy=${sortBy}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getAllJobs = createAsyncThunk(
+  "job/fetchAllJobsData",
+  async (
+    {
+      user_id,
+      searchTerm = "",
+      minBudget = "",
+      maxBudget = "",
+      size = "",
+      sortOrder = "",
+      sortBy = "",
+    },
+    thunkAPI
+  ) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/offer/all/${user_id}?searchTerm=${searchTerm}&minBudget=${minBudget}&maxBudget=${maxBudget}&project_size=${size}&sortOrder=${sortOrder}&sortBy=${sortBy}`,
         config
       );
       return response.data;
@@ -263,11 +321,28 @@ export const getJobs = createAsyncThunk(
   }
 );
 
-export const getJobById = createAsyncThunk(
-  "job/fetchJobById",
-  async (jobId, thunkAPI) => {
+export const getBookmarks = createAsyncThunk(
+  "job/fetchBookmarks",
+  async (userId, thunkAPI) => {
     try {
-      const response = await Axios.get(`${baseURL}/offer/${jobId}`, config);
+      const response = await Axios.get(
+        `${baseURL}/bookmark/user/${userId}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getMyJobs = createAsyncThunk(
+  "job/fetchMyJobs",
+  async (userId, thunkAPI) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/offer/user/${userId}`,
+        config
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -292,4 +367,184 @@ export const deleteJob = asyncThunkCreator(
   "/offer/{jobId}",
   "delete",
   "Job Deleted Successfully!"
+);
+export const addBookmark = asyncThunkCreator(
+  "user/addBookmark",
+  "/bookmark/create/",
+  "post",
+  "Job Bookmarked Successfully!"
+);
+
+export const deleteBookmark = asyncThunkCreator(
+  "user/deleteBookmarkData",
+  "/bookmark/{bookmarkId}",
+  "delete",
+  "Bookmark Removed Successfully!"
+);
+export const addProposal = asyncThunkCreator(
+  "user/addProposal",
+  "/proposal/create/",
+  "post",
+  "Proposal Submitted Successfully!"
+);
+export const editProposal = asyncThunkCreator(
+  "user/editProposalData",
+  "/proposal/{proposalId}",
+  "patch",
+  "Proposal Edited Successfully!"
+);
+export const acceptProposal = asyncThunkCreator(
+  "user/acceptProposalData",
+  "/proposal/accept/{proposalId}/{jobId}",
+  "patch",
+  "Proposal Accepted Successfully!"
+);
+export const deleteProposal = asyncThunkCreator(
+  "user/deleteProposalData",
+  "/proposal/{proposalId}",
+  "delete",
+  "Proposal Deleted Successfully!"
+);
+export const requestCompletion = asyncThunkCreator(
+  "user/requestCompletionData",
+  "/offer/requestCompletion/{id}",
+  "post",
+  "Requested the client to mark the job as completed!"
+);
+export const markAsCompleted = asyncThunkCreator(
+  "user/requestCompletionData",
+  "/offer/complete/{jobId}/{userId}",
+  "patch",
+  "Marked the job as completed!"
+);
+export const giveClientReview = asyncThunkCreator(
+  "user/requestCompletionData",
+  "/offer/addClientReview/{userId}/{jobId}",
+  "post",
+  "Gave the client the review!"
+);
+export const cancelJob = asyncThunkCreator(
+  "user/cancelJobData",
+  "/offer/cancel/{jobId}",
+  "delete",
+  "Job canceled Successfully!"
+);
+export const hireNow = asyncThunkCreator(
+  "user/requestCompletionData",
+  "/offer/hireMe/{id}",
+  "post",
+  "Job notification sent to the freelancer!"
+);
+// Async thunk action creators for category-related actions
+export const getCategories = createAsyncThunk(
+  "category/fetchCategoryData",
+  async (search, thunkAPI) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/category?searchTerm=${search}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getCategoriesById = createAsyncThunk(
+  "category/fetchCategoryById",
+  async (
+    { id, search = "", country = "", overall_rating = "", hourly_rate = "" },
+    thunkAPI
+  ) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/category/${id}?searchTerm=${search}&country=${country}&overall_rating=${overall_rating}&hourly_rate=${hourly_rate}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getEmployeesByCategory = createAsyncThunk(
+  "category/fetchEmployeesByCategory",
+  async (id, thunkAPI) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/misc/employees/${id}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// Async thunk action creators for country actions
+export const getCountries = createAsyncThunk(
+  "country/fetchCountryData",
+  async (_, thunkAPI) => {
+    try {
+      const response = await Axios.get(`${baseURL}/misc/countries`, config);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+// Async thunk action creators for skills actions
+export const getSkills = createAsyncThunk(
+  "skills/fetchSkillsData",
+  async (_, thunkAPI) => {
+    try {
+      const response = await Axios.get(`${baseURL}/skill`, config);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getHires = createAsyncThunk(
+  "Hires/fetchSkillsData",
+  async ({ userId, search, status }, thunkAPI) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/offer/hired/${userId}?searchTerm=${search}&status=${status}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getClients = createAsyncThunk(
+  "Clients/fetchSkillsData",
+  async ({ userId, search, status }, thunkAPI) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/offer/client/${userId}?searchTerm=${search}&status=${status}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getNotifications = createAsyncThunk(
+  "Clients/fetchSkillsData",
+  async (userId, thunkAPI) => {
+    try {
+      const response = await Axios.get(
+        `${baseURL}/notification/${userId}`,
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
 );

@@ -3,6 +3,7 @@ import loadingSlice from "./reducers/loadingSlice";
 import jobSlice from "./reducers/jobSlice";
 import userSlice from "./reducers/userSlice";
 import authSlice from "./reducers/authSlice";
+import categorySlice from "./reducers/categorySlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     user: userSlice,
     loading: loadingSlice,
     jobs: jobSlice,
+    categories: categorySlice,
   },
 });
 

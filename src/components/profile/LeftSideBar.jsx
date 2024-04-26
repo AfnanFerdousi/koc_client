@@ -88,19 +88,31 @@ const ProfileHeader = ({ userProfile, isMine }) => {
   };
 
   return (
-    <div className="col-span-1 border-b lg:border-r">
+    <div className="col-span-1 lg:border-r">
       {/* Stats section */}
-      <div className="flex items-center justify-between border-b p-6">
+      <div className="grid grid-cols-3  gap-2 place-items-center items-center border-b p-3">
         {[
-          { label: "Total earnings", value: userProfile?.amount_earned },
           {
-            label: "Completed projects",
-            value: userProfile?.completed_projects,
+            label: "Total earnings",
+            value: `$${userProfile?.amount_earned ?? 0}`,
           },
-          { label: "Active projects", value: userProfile?.active_projects },
+          {
+            label: "Completed jobs",
+            value: userProfile?.completed_projects ?? 0,
+          },
+          {
+            label: "Active jobs",
+            value: userProfile?.active_projects ?? 0,
+          },
+          { label: "Total spent", value: `$${userProfile?.amount_spent ?? 0}` },
+          { label: "Total hired", value: `${userProfile?.total_hired ?? 0}` },
+          {
+            label: "Posted jobs",
+            value: `${userProfile?.posted_projects ?? 0}`,
+          },
         ].map((stat, index) => (
           <div key={index}>
-            <p className="text-2xl font-semibold">{stat.value}</p>
+            <p className="text-2xl font-semibold text-center">{stat.value}</p>
             <p className="text-sm text-secondary">{stat.label}</p>
           </div>
         ))}
@@ -160,18 +172,44 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               </div>
             ))
           ) : (
-            <p className="text-secondary my-2">No data found</p>
+            <p className="text-secondary my-2">No data to show</p>
           )}
         </div>
 
+        {/* Contact info section */}
+        <div className="mb-5">
+          <p className="text-2xl font-semibold mb-2">Contact info</p>
+          {[
+            {
+              label: "Phone Number",
+              data: userProfile?.user?.phone_number,
+            },
+            {
+              label: "Email Address",
+              data: userProfile?.user?.email,
+            },
+          ].map((item, index) => (
+            <p key={index} className="font-medium mb-2 flex items-center ">
+              <span className="whitespace-nowrap">{item.label}</span>:{" "}
+              {item.data ? (
+                <span className="mx-1 font-normal overflow-x-clip">
+                  {item.data}
+                </span>
+              ) : (
+                <span className="mx-1 font-normal">Not added</span>
+              )}
+            </p>
+          ))}
+        </div>
         {/* Verifications section */}
         <div className="mb-5">
           <p className="text-2xl font-semibold mb-2">Verifications</p>
           {[
+            { label: "Email", verified: userProfile?.user?.is_verified },
             { label: "Phone", verified: userProfile?.phone_verified },
             { label: "Payment", verified: userProfile?.payment_verified },
           ].map((verification, index) => (
-            <p key={index} className="font-medium mb-2 flex items-center">
+            <p key={index} className="font-medium mb-2 flex items-center ">
               {verification.label}:{" "}
               {verification.verified ? (
                 <>
@@ -259,7 +297,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               </div>
             ))
           ) : (
-            <p className=" text-secondary my-2">No data found</p>
+            <p className=" text-secondary my-2">No data to show</p>
           )}
         </div>
       </div>

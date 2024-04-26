@@ -7,9 +7,12 @@ import { AnimatePresence } from "framer-motion";
 import ProjectModal from "../modals/ProjectModal";
 import DeleteModal from "../modals/DeleteModal";
 import InfoModal from "../modals/InfoModal";
+import SkillsModal from "../modals/SkillsModal";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { Rating, StickerStar } from "@smastrom/react-rating";
 import { FiPlus } from "react-icons/fi";
+import { formatDistance } from "date-fns";
+import { useRouter } from "next/router";
 
 const MainContent = ({ userProfile, isMine }) => {
   const [showEditProjectModal, setShowEditProjectModal] = useState(null);
@@ -17,6 +20,7 @@ const MainContent = ({ userProfile, isMine }) => {
   const [infoEditData, setInfoEditData] = useState({
     sub_title: "",
     description: "",
+    hourly_rate: 0,
   });
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(null);
@@ -25,10 +29,11 @@ const MainContent = ({ userProfile, isMine }) => {
     link: "",
     image: "",
   });
-
+  const [showSkillsModal, setShowSkillsModal] = useState(false);
+  const [activeWork, setActiveWork] = useState("freelancer");
   const loading = useSelector((state) => state.loading.loading);
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const handleDeleteProject = () => {
     dispatch(setLoading(true));
     dispatch(
@@ -48,14 +53,26 @@ const MainContent = ({ userProfile, isMine }) => {
       });
   };
   // Toggle show more reviews
-  const [displayedRemainingReviews, setDisplayedRemainingReviews] = useState(3);
+  const [
+    displayedRemainingFreelancerReviews,
+    setDisplayedRemainingFreelancerReviews,
+  ] = useState(3);
+  const [displayedRemainingClientReviews, setDisplayedRemainingClientReviews] =
+    useState(3);
 
-  const loadMoreReviews = () => {
-    setDisplayedRemainingReviews((prev) => prev + 3);
+  const loadMoreFreelancerReviews = () => {
+    setDisplayedRemainingFreelancerReviews((prev) => prev + 3);
   };
 
-  const showLessReviews = () => {
-    setDisplayedRemainingReviews(3);
+  const showLessFreelancerReviews = () => {
+    setDisplayedRemainingFreelancerReviews(3);
+  };
+  const loadMoreClientReviews = () => {
+    setDisplayedRemainingClientReviews((prev) => prev + 3);
+  };
+
+  const showLessClientReviews = () => {
+    setDisplayedRemainingClientReviews(3);
   };
 
   // Load more projects
@@ -75,11 +92,18 @@ const MainContent = ({ userProfile, isMine }) => {
       {/* Info section */}
       <div className="p-6 border-b">
         <div className="flex items-center justify-between">
-          <p className="text-2xl font-semibold mb-6">
-            {userProfile?.sub_title
-              ? userProfile?.sub_title
-              : "No title added."}
-          </p>
+          <div className="flex items-center justify-between gap-x-3 mb-6">
+            <p className="text-2xl font-semibold ">
+              {userProfile?.sub_title
+                ? userProfile?.sub_title
+                : "No title added"}
+            </p>
+            <button className="rounded-3xl font-medium px-3 py-1 bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
+              {userProfile?.hourly_rate
+                ? userProfile?.hourly_rate.toFixed(2) + "$/hr"
+                : "0.00$/hr"}
+            </button>
+          </div>
           <div
             className={`rounded-full p-[6px] border-[1px] border-primary hover:bg-gray-50 cursor-pointer transition-all ${
               !isMine && "hidden"
@@ -89,6 +113,7 @@ const MainContent = ({ userProfile, isMine }) => {
               setInfoEditData({
                 sub_title: userProfile?.sub_title,
                 description: userProfile?.description,
+                hourly_rate: userProfile?.hourly_rate,
               });
             }}
           >
@@ -99,7 +124,7 @@ const MainContent = ({ userProfile, isMine }) => {
           description={
             userProfile?.description
               ? userProfile?.description
-              : "Please add your description"
+              : "No description added"
           }
           maxLines={5}
           className={"text-secondary"}
@@ -108,20 +133,43 @@ const MainContent = ({ userProfile, isMine }) => {
 
       {/* work history  */}
       <div className="p-6 border-b">
-        <p className="text-2xl font-semibold mb-4">
-          Work History ({userProfile?.completed_projects})
-        </p>
-        {userProfile?.reviews?.length > 0 ? (
-          [...userProfile.reviews] // Create a shallow copy
+        <p className="text-2xl font-semibold mb-4">Work History</p>
+        <div className="flex overflow-x-auto overflow-y-hidden border-b border-gray-200 whitespace-nowrap ">
+          <button
+            className={`${
+              activeWork === "freelancer"
+                ? "inline-flex items-center h-10 px-8   text-center text-primary bg-transparent border-b-2 border-primary font-medium sm:text-base  whitespace-nowrap focus:outline-none"
+                : "inline-flex items-center h-10 px-8   text-center text-secondary bg-transparent border-b-2 border-transparent sm:text-base  whitespace-nowrap cursor-base font-medium focus:outline-none hover:border-gray-300"
+            } `}
+            onClick={() => setActiveWork("freelancer")}
+          >
+            As a freelancer ({userProfile?.client_reviews?.length ?? 0})
+          </button>
+          <button
+            className={`${
+              activeWork === "client"
+                ? "inline-flex items-center h-10 px-8   text-center text-primary bg-transparent border-b-2 border-primary font-medium sm:text-base  whitespace-nowrap focus:outline-none"
+                : "inline-flex items-center h-10 px-8   text-center text-secondary bg-transparent border-b-2 border-transparent sm:text-base  whitespace-nowrap cursor-base font-medium focus:outline-none hover:border-gray-300"
+            } `}
+            onClick={() => setActiveWork("client")}
+          >
+            As a client ({userProfile?.client_reviews?.length ?? 0})
+          </button>
+        </div>
+
+        {activeWork === "client" && userProfile?.client_reviews?.length > 0 ? (
+          [...userProfile.client_reviews] // Create a shallow copy
             .reverse() // Reverse the copy of the array
-            .slice(0, displayedRemainingReviews)
+            .slice(0, displayedRemainingClientReviews)
             .map((item, index) => (
               <div
                 className={`p-3 cursor-pointer transition-all group hover:bg-gray-100 ${
-                  index < displayedRemainingReviews - 1 ||
-                  (userProfile?.reviews?.length - 1 !== index && "border-b")
+                  userProfile.freelancer_reviews.length - 1 === index
+                    ? ""
+                    : "border-b"
                 }`}
                 key={index}
+                onClick={() => router.push(`/job/${item?.offer?._id}`)}
               >
                 <p className="text-lg text-primary group-hover:underline cursor-pointer font-medium">
                   {item?.offer?.title}
@@ -150,35 +198,144 @@ const MainContent = ({ userProfile, isMine }) => {
                     <span className="font-medium">{item?.duration}</span>
                   </p>
                 </div>
-                <p className="text-secondary ">
-                  &apos;{item?.description}&apos;
+                <p className="text-secondary flex items-center gap-x-2">
+                  &apos;{" "}
+                  <Description
+                    description={
+                      item?.description ? item?.description : "No review given"
+                    }
+                    maxLines={3}
+                    className={"text-secondary"}
+                  />
+                  &apos;
                 </p>
                 <p className="text-md pt-3 text-secondary">
                   Project budget :{" "}
-                  <span className="font-medium">${item?.amount}</span>
+                  <span className="font-medium">${item?.amount ?? 0}</span>
+                </p>
+              </div>
+            ))
+        ) : activeWork === "freelancer" &&
+          userProfile?.freelancer_reviews?.length > 0 ? (
+          [...userProfile.freelancer_reviews] // Create a shallow copy
+            .reverse() // Reverse the copy of the array
+            .slice(0, displayedRemainingFreelancerReviews)
+            .map((item, index) => (
+              <div
+                className={`p-3  cursor-pointer transition-all group hover:bg-gray-100 ${
+                  userProfile.freelancer_reviews.length - 1 === index
+                    ? ""
+                    : "border-b"
+                }`}
+                key={index}
+                onClick={() => router.push(`/job/${item?.offer?._id}`)}
+              >
+                <p className="text-lg text-primary group-hover:underline cursor-pointer font-medium">
+                  {item?.offer?.title}
+                </p>
+
+                <div className="flex justify-start gap-x-3 items-center my-2">
+                  <div className="items-center flex">
+                    <Rating
+                      style={{ maxWidth: 100 }}
+                      value={item?.rating}
+                      readOnly
+                      itemStyles={{
+                        itemShapes: StickerStar,
+                        activeFillColor: "#35B900",
+                        inactiveFillColor: "#cecece",
+                      }}
+                    />
+                  </div>
+                  <p className="font-medium  text-secondary">
+                    {" "}
+                    {item?.rating.toFixed(2)}
+                  </p>
+
+                  <p>|</p>
+                  <p className="text-md  text-secondary">
+                    <span className="font-medium">
+                      {" "}
+                      {item?.createdAt &&
+                        (({ timestamp }) => (
+                          <span>
+                            {formatDistance(new Date(timestamp), new Date(), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                        ))({ timestamp: item?.createdAt ?? 0 })}
+                    </span>
+                  </p>
+                </div>
+                <p className="text-secondary flex items-center gap-x-2">
+                  &apos;{" "}
+                  <Description
+                    description={
+                      item?.description ? item?.description : "No review given"
+                    }
+                    maxLines={3}
+                    className={"text-secondary"}
+                  />
+                  &apos;
+                </p>
+                <p className="text-md pt-3 text-secondary">
+                  Project budget :{" "}
+                  <span className="font-medium">${item?.amount ?? 0}</span>
                 </p>
               </div>
             ))
         ) : (
-          <p className="text-secondary my-2">No data found.</p>
+          <p className="text-secondary my-2">No data to show.</p>
         )}
 
-        <div className={`flex items-center justify-center gap-x-2 `}>
-          {userProfile?.reviews?.length > displayedRemainingReviews && (
+        <div
+          className={`${
+            activeWork === "freelancer" ? "flex" : "hidden"
+          }  items-center justify-center gap-x-2 `}
+        >
+          {userProfile?.freelancer_reviews?.length >
+            displayedRemainingFreelancerReviews && (
             <div className="flex items-center justify-center my-4">
               <button
                 className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
-                onClick={loadMoreReviews}
+                onClick={loadMoreFreelancerReviews}
               >
                 Load more
               </button>
             </div>
           )}
-          {displayedRemainingReviews > 3 && (
+          {displayedRemainingFreelancerReviews > 3 && (
             <div className="flex items-center justify-center my-4">
               <button
                 className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
-                onClick={showLessReviews}
+                onClick={showLessFreelancerReviews}
+              >
+                Show less
+              </button>
+            </div>
+          )}
+        </div>
+        <div
+          className={`${
+            activeWork === "client" ? "flex" : "hidden"
+          }  items-center justify-center gap-x-2 `}
+        >
+          {userProfile?.client_reviews?.length >
+            displayedRemainingClientReviews && (
+            <div className="flex items-center justify-center my-4">
+              <button
+                className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                onClick={loadMoreClientReviews}
+              >
+                Load more
+              </button>
+            </div>
+          )}
+          {displayedRemainingClientReviews > 3 && (
+            <div className="flex items-center justify-center my-4">
+              <button
+                className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                onClick={showLessClientReviews}
               >
                 Show less
               </button>
@@ -266,7 +423,7 @@ const MainContent = ({ userProfile, isMine }) => {
                 </div>
               ))
           ) : (
-            <p className="text-secondary my-2">No data found</p>
+            <p className="text-secondary my-2">No data to show</p>
           )}
         </div>
         <div className={`flex items-center justify-center gap-x-2 `}>
@@ -295,9 +452,19 @@ const MainContent = ({ userProfile, isMine }) => {
 
       {/* Skills Section  */}
       <div className="p-6">
-        <p className="text-2xl font-semibold mb-4">
-          Skills ({userProfile?.skills?.length})
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-2xl font-semibold mb-4">
+            Skills ({userProfile?.skills?.length})
+          </p>
+          <div
+            className={`rounded-full p-[3px] border-[1px] border-primary hover:bg-gray-50 cursor-pointer transition-all ${
+              !isMine && "hidden"
+            }`}
+            onClick={() => setShowSkillsModal(true)}
+          >
+            <MdEdit className="text-primary text-lg" />
+          </div>
+        </div>
         <div className="flex items-center flex-wrap gap-2">
           {userProfile?.skills?.length > 0 ? (
             userProfile?.skills.map((item, index) => (
@@ -309,12 +476,19 @@ const MainContent = ({ userProfile, isMine }) => {
               </button>
             ))
           ) : (
-            <p className="text-secondary my-2">No data found</p>
+            <p className="text-secondary my-2">No data to show</p>
           )}
         </div>
       </div>
       {/* Modals for adding, editing, and deleting languages and education */}
       <AnimatePresence initial={false} onExitComplete={() => null}>
+        {showSkillsModal && (
+          <SkillsModal
+            setShowSkillsModal={setShowSkillsModal}
+            initialData={infoEditData}
+            userProfile={userProfile}
+          />
+        )}
         {showEditInfoModal && (
           <InfoModal
             setShowEditInfoModal={setShowEditInfoModal}

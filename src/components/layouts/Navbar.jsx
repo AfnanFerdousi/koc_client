@@ -2,9 +2,11 @@ import * as React from "react";
 import AccountMenu from "./menu";
 import MenuBar from "./menuBar";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const router = useRouter();
   React.useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -14,34 +16,49 @@ const Navbar = () => {
 
   return (
     <div className="header">
-      <div className="left-part ">
-        <Link href="/" className="logo">
+      <div className="flex items-center justify-center ">
+        <Link href="/" className="logo ">
           KocFreelancing <i className="ri-user-follow-line"></i>
         </Link>
         {isAuthenticated ? (
           <div className="navlist">
-            <MenuBar
-              menuName={"İş bul"}
-              menuItems={[
-                "İş bul",
-                "Kategoriler",
-                "Kaydedilen iş",
-                "Teklifler",
-              ]}
-            />
-            <MenuBar
-              menuName={"Benim işim"}
-              menuItems={["My Job", "Work Diary"]}
-            />
-            <Link href="/jobs" className="nav-text">
-              Find Work
+            <Link
+              href="/jobs"
+              className={`${
+                router.pathname === "/jobs" && "!text-primary"
+              } nav-text`}
+            >
+              Jobs
+            </Link>
+            <Link
+              href="/categories"
+              className={`${
+                router.pathname === "/categories" && "!text-primary"
+              } nav-text`}
+            >
+              Categories
+            </Link>
+            <Link
+              href="/myhires"
+              className={`${
+                router.pathname === "/myhires" && "!text-primary"
+              } nav-text`}
+            >
+              Hired Freelancers
+            </Link>
+            <Link
+              href="/myclients"
+              className={`${
+                router.pathname === "/myclients" && "!text-primary"
+              } nav-text`}
+            >
+              My Clients
             </Link>
           </div>
         ) : (
           <div className="navlist">
-            <a className="nav-text">Yardım & Destek</a>
-            <a className="nav-text">Kategoriler</a>
-            <a className="nav-text">İletişim</a>
+            <a className="nav-text">Jobs</a>
+            <a className="nav-text">Categories</a>
           </div>
         )}
       </div>

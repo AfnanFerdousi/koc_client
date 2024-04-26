@@ -13,12 +13,18 @@ import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
+import Image from "next/image";
+import { getNotifications } from "../../axios/axios";
+import { setLoading } from "../../redux/reducers/loadingSlice";
+import { formatDistance } from "date-fns";
+import { Badge } from "@mui/material";
 
 const AccountMenu = () => {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
-  const router = useRouter();
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -29,6 +35,19 @@ const AccountMenu = () => {
     }
 
     setOpen(false);
+  };
+  const [open1, setOpen1] = React.useState(false);
+  const anchorRef1 = React.useRef(null);
+  const handleToggle1 = () => {
+    setOpen1((prevOpen1) => !prevOpen1);
+  };
+
+  const handleClose1 = (event) => {
+    if (anchorRef1.current && anchorRef1.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen1(false);
   };
   const handleProfile = (e) => {
     router.push(`/profile/me`, { scroll: false });
@@ -49,6 +68,14 @@ const AccountMenu = () => {
       setOpen(false);
     }
   }
+  function handleListKeyDown1(event) {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      setOpen(false);
+    } else if (event.key === "Escape") {
+      setOpen(false);
+    }
+  }
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = React.useRef(open);
@@ -62,9 +89,157 @@ const AccountMenu = () => {
     prevOpen.current = open;
   }, [open]);
   const userProfile = useSelector((state) => state.user?.data);
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen1 = React.useRef(open);
+  React.useEffect(() => {
+    if (prevOpen1.current === true && open === false) {
+      if (anchorRef1.current) {
+        anchorRef1.current.focus();
+      }
+    }
+
+    prevOpen1.current = open;
+  }, [open]);
+
+  const [notifications, setNotifications] = React.useState([]);
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.loading.loading);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      dispatch(setLoading(true));
+      try {
+        // Fetch Skills data
+        const response = await dispatch(
+          getNotifications(userProfile?.user?._id)
+        );
+
+        setNotifications(response?.payload?.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+      dispatch(setLoading(false));
+    };
+
+    fetchData();
+  }, [dispatch, userProfile?.user?._id, router]);
 
   return (
-    <Stack direction="row" spacing={2}>
+    <Stack direction="row">
+      <div>
+        <IconButton
+          ref={anchorRef1}
+          id="account-button"
+          aria-controls={open1 ? "account-menu" : undefined}
+          aria-expanded={open1 ? "true" : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle1}
+        >
+          <Badge badgeContent={notifications?.length ?? 0} color="success">
+            <CircleNotificationsIcon
+              sx={{
+                width: 32,
+                height: 32,
+                color: "white",
+              }}
+            />
+          </Badge>
+        </IconButton>
+        <Popper
+          open={open1}
+          anchorEl={anchorRef1.current}
+          role={undefined}
+          placement="bottom-start"
+          transition
+          disablePortal
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === "bottom-start" ? "left top" : "left bottom",
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleClose1}>
+                  <MenuList
+                    autoFocusItem={open1}
+                    id="composition-menu"
+                    aria-labelledby="composition-button"
+                    onKeyDown={handleListKeyDown1}
+                    className="w-[380px] shadow bg-gray-50 rounded-3xl"
+                  >
+                    <div className="bg-gray-50  h-[50vh] w-full overflow-y-scroll p-3  absolute right-0">
+                      <div className="flex items-center justify-between">
+                        <p
+                          tabIndex={0}
+                          className="focus:outline-none mb-2 text-xl font-semibold leading-6 text-gray-800"
+                        >
+                          Notifications
+                        </p>
+                      </div>
+
+                      {notifications?.map((item, index) => (
+                        <div
+                          className={`bg-gray-50 w-full hover:bg-gray-100 hover:rounded-lg cursor-pointer p-2  flex items-start gap-x-2 ${
+                            !notifications?.length - 1 === index && "border-b"
+                          }`}
+                          key={index}
+                        >
+                          <Avatar
+                            sx={{
+                              width: 40,
+                              height: 40,
+                              backgroundColor: "#35B900",
+                              color: "white",
+                              fontSize: 16,
+                              borderRadius: 8,
+                              marginTop: 0.5,
+                            }}
+                            src={item?.img}
+                          >
+                            KOC
+                          </Avatar>
+                          <div>
+                            <p className="">{item?.text}</p>
+                            <p className="text-sm mt-1 leading-normal font-medium text-secondary">
+                              {item?.createdAt &&
+                                (({ timestamp }) => (
+                                  <span>
+                                    {formatDistance(
+                                      new Date(timestamp),
+                                      new Date(),
+                                      {
+                                        addSuffix: true,
+                                      }
+                                    )}
+                                  </span>
+                                ))({ timestamp: item?.createdAt ?? 0 })}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex items-center justify-between">
+                        <hr className="w-full" />
+                        <p
+                          tabIndex={0}
+                          className="focus:outline-none text-sm flex flex-shrink-0 leading-normal px-3 py-8 text-secondary"
+                        >
+                          {notifications?.length > 1
+                            ? "That's it for now"
+                            : "No notifications found"}
+                        </p>
+                        <hr className="w-full" />
+                      </div>
+                    </div>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+      </div>
       <div>
         <IconButton
           ref={anchorRef}

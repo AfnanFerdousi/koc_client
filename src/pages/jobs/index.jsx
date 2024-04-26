@@ -1,142 +1,102 @@
-import { addJob, getJobs } from "@/axios/axios";
 import Footer from "@/components/layouts/Footer";
 import Navbar from "@/components/layouts/Navbar";
 import ProjectCard from "@/components/projectCard/projectCard";
-import { setLoading } from "@/redux/reducers/jobSlice";
-import Modal from "@/components/ui/Modal";
-import { AnimatePresence } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import Head from "next/head";
+import JobsModal from "../../components/modals/JobsModal";
+import { AnimatePresence } from "framer-motion";
+import {
+  getBookmarks,
+  getMyJobs,
+  getJobs,
+  getAllJobs,
+} from "../../axios/axios";
+import { setLoading } from "../../redux/reducers/loadingSlice";
+import ProtectedRoute from "../../components/layouts/ProtectedRoute";
 
 const Jobs = () => {
   const dispatch = useDispatch();
-
-  // Fetch data and loading state from Redux store
-  const jobs = useSelector((state) => state?.jobs.jobs.data);
-  const loading = useSelector((state) => state?.jobs.loading);
+  const [activeJobs, setActiveJobs] = useState("bestMatches");
+  const loading = useSelector((state) => state.loading.loading);
   const userProfile = useSelector((state) => state.user.data);
   const [searchTerm, setSearchTerm] = useState("");
-  // Dispatch the getJobs action on component mount
+  const allJobs = useSelector((state) => state.jobs?.allJobs?.data);
+  const bestMatches = useSelector((state) => state.jobs?.jobs?.data);
+  const bookmarks = useSelector((state) => state.jobs?.bookmarks?.data);
+  const myJobs = useSelector((state) => state.jobs?.myJobs?.data);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortBy, setSortBy] = useState("createdAt");
   useEffect(() => {
-    dispatch(getJobs(searchTerm));
-  }, [dispatch, searchTerm]);
+    const fetchData = async () => {
+      dispatch(setLoading(true));
+      await dispatch(
+        getJobs({
+          user_id: userProfile?.user?._id,
+          sortOrder: sortOrder,
+          sortBy: sortBy,
+        })
+      );
 
-  const [matchingJobs, setMatchingJobs] = useState([]);
-  const [remainingJobs, setRemainingJobs] = useState([]);
-  const [activeJobs, setActiveJobs] = useState("remaining");
-  // Assuming allJobs is an array of objects representing jobs
-  const allJobs = [...jobs]; // Your array of jobs
+      await dispatch(getBookmarks(userProfile?.user?._id));
+      await dispatch(getMyJobs(userProfile?.user?._id));
+      dispatch(setLoading(false));
+    };
 
-  // Filter jobs based on whether their user value matches userProfile?.user?._id
-  const filterJobs = () => {
-    const userProfileId = userProfile?.user?._id;
-    if (!userProfileId) return; // Exit if userProfileId is not available
+    fetchData();
+  }, [dispatch, sortBy, sortOrder, userProfile]);
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch(setLoading(true));
+      await dispatch(
+        getAllJobs({
+          user_id: userProfile?.user?._id,
+          sortOrder: sortOrder,
+          sortBy: sortBy,
+          searchTerm: searchTerm,
+        })
+      );
+      dispatch(setLoading(false));
+    };
 
-    const matching = [];
-    const remaining = [];
+    fetchData();
+  }, [dispatch, searchTerm, sortBy, sortOrder, userProfile]);
 
-    allJobs.forEach((job) => {
-      if (job.user === userProfileId) {
-        matching.push(job);
-      } else {
-        remaining.push(job);
-      }
-    });
+  console.log("jobs", bestMatches, allJobs, loading);
 
-    setMatchingJobs(matching);
-    setRemainingJobs(remaining);
-  };
-  const [displayedRemainingJobs, setDisplayedRemainingJobs] = useState(10);
-  const [displayedMatchingJobs, setDisplayedMatchingJobs] = useState(10);
+  const [displayedBestMatches, setDisplayedBestMatches] = useState(10);
+  const [displayedMyJobs, setDisplayedMyJobs] = useState(10);
+  const [displayedBookmarks, setDisplayedBookmarks] = useState(10);
+  const [displayedAllJobs, setDisplayedAllJobs] = useState(10);
 
   const loadMoreJobs = () => {
-    if (activeJobs === "remaining") {
-      setDisplayedRemainingJobs((prev) => prev + 10);
-    } else if (activeJobs === "matching") {
-      setDisplayedMatchingJobs((prev) => prev + 10);
+    if (activeJobs === "bestMatches") {
+      setDisplayedBestMatches((prev) => prev + 10);
+    } else if (activeJobs === "myJobs") {
+      setDisplayedMyJobs((prev) => prev + 10);
+    } else if (activeJobs === "bookmarks") {
+      setDisplayedBookmarks((prev) => prev + 10);
+    } else if (searchTerm !== "") {
+      setDisplayedAllJobs((prev) => prev + 10);
     }
   };
 
   const showLessJobs = () => {
-    if (activeJobs === "remaining") {
-      setDisplayedRemainingJobs(10);
-    } else if (activeJobs === "matching") {
-      setDisplayedMatchingJobs(10);
+    if (activeJobs === "bestMatches") {
+      setDisplayedBestMatches(10);
+    } else if (activeJobs === "myJobs") {
+      setDisplayedMyJobs(10);
+    } else if (activeJobs === "bookmarks") {
+      setDisplayedBookmarks(10);
+    } else if (searchTerm !== "") {
+      setDisplayedAllJobs(10);
     }
   };
 
-  // Call filterJobs when the component mounts or when userProfile changes
-  useEffect(() => {
-    filterJobs();
-  }, [userProfile, jobs, searchTerm]);
-  console.log(matchingJobs, remainingJobs);
-  // Selecting necessary data from Redux store
-  const addJobLoading = useSelector((state) => state.jobs?.loading);
-
-  // State variables
   const [showAddJobModal, setShowAddJobModal] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    budget: "",
-    deadline: "",
-    project_size: "",
-    job_description: "",
-    skills: [],
-    user: "",
-  });
-  const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-  // Function to check form validity
-  const checkFormValidity = () => {
-    const { budget, deadline, title } = formData;
-    setIsSaveEnabled(title && budget && deadline);
-  };
-
-  useEffect(() => {
-    // Call checkFormValidity whenever formData changes
-    checkFormValidity();
-  }, [formData]);
-  // Function to handle saving experience data
-  const handleSaveJob = () => {
-    if (isSaveEnabled) {
-      dispatch(setLoading(true));
-      dispatch(addJob({ dynamicParams: {}, bodyData: formData }))
-        .then(() => {
-          // After adding experience, fetch the updated profile data
-          return dispatch(getJobs(""));
-        })
-        .then(() => {
-          // Once profile is fetched, reset loading state and close modal
-          dispatch(setLoading(false));
-          setShowAddJobModal(false);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          dispatch(setLoading(false));
-        });
-    } else {
-      console.error("Incomplete form fields");
-    }
-  };
-
-  useEffect(() => {
-    // Reset form data when the modal is closed
-    if (!showAddJobModal) {
-      setFormData({
-        title: "",
-        budget: "",
-        deadline: "",
-        project_size: "",
-        job_description: "",
-        skills: [],
-        user: "",
-      });
-    }
-  }, [showAddJobModal]);
-
+  console.log(searchTerm, searchTerm === "", searchTerm !== "", allJobs);
   return (
-    <div>
+    <ProtectedRoute>
       <Head>
         <title>Find work | KocFreelancing</title>
       </Head>
@@ -169,73 +129,172 @@ const Jobs = () => {
               onChange={(event) => setSearchTerm(event.target.value)}
             />
           </div>
-          <p className="my-8 font-medium  text-2xl">Jobs you might like</p>
+          <div className="flex items-center justify-between my-8 ">
+            <p className="font-medium  text-2xl">Jobs you might like</p>
+            <p>
+              {" "}
+              <label htmlFor="sort" className="mx-2 font-medium">
+                Sort By
+              </label>
+              <select
+                id="sort"
+                className="cursor-pointer px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-48"
+                onChange={(event) => {
+                  const selectedOption = event.target.value;
+                  if (selectedOption === "Newest") {
+                    setSortBy("createdAt");
+                    setSortOrder("asc");
+                  } else if (selectedOption === "Oldest") {
+                    setSortBy("createdAt");
+                    setSortOrder("dsc");
+                  } else if (selectedOption === "Lowest Bids") {
+                    setSortBy("proposals.length");
+                    setSortOrder("asc");
+                  } else if (selectedOption === "Highest Bids") {
+                    setSortBy("proposals.length");
+                    setSortOrder("dsc");
+                  } else if (selectedOption === "Lowest Price") {
+                    setSortBy("budget");
+                    setSortOrder("asc");
+                  } else if (selectedOption === "Highest Price") {
+                    setSortBy("budget");
+                    setSortOrder("dsc");
+                  }
+                }}
+              >
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
+                <option value="Lowest Bids">Fewest Bids</option>
+                <option value="Highest Bids">Most Bids</option>
+                <option value="Lowest Price">Lowest Price</option>
+                <option value="Highest Price">Highest Price</option>
+              </select>
+            </p>
+          </div>
 
           <div className="border rounded-3xl max-w-screen-xl  justify-center    mb-14 mx-auto">
-            <div>
-              <ul className="hidden text-secondary font-medium text-center rounded-t-3xl shadow sm:flex  ">
-                <li className="w-full focus-within:z-10">
-                  <button
-                    className={
-                      activeJobs === "remaining"
-                        ? "inline-block w-full p-4 text-gray-900 bg-gray-100 border-r border-gray-200  rounded-tl-3xl active "
-                        : "inline-block w-full p-4 bg-white border-r border-gray-200  hover:text-gray-700 rounded-tl-3xl hover:bg-gray-50"
-                    }
-                    onClick={() => setActiveJobs("remaining")}
-                  >
-                    Best matches ({remainingJobs?.length})
-                  </button>
-                </li>
-                <li className="w-full focus-within:z-10">
-                  <button
-                    className={
-                      activeJobs === "matching"
-                        ? "inline-block w-full p-4 text-gray-900 bg-gray-100 border-r border-gray-200  rounded-tr-3xl active "
-                        : "inline-block w-full p-4 bg-white border-r border-gray-200  hover:text-gray-700 rounded-tr-3xl hover:bg-gray-50"
-                    }
-                    onClick={() => setActiveJobs("matching")}
-                  >
-                    Your jobs ({matchingJobs?.length})
-                  </button>
-                </li>
-              </ul>
-            </div>
+            {searchTerm !== "" &&
+              (loading ? (
+                <div className="rounded-3xl max-w-screen-xl flex items-center justify-center h-[80vh]  mb-14 mx-auto">
+                  <div className="loader"></div>
+                </div>
+              ) : allJobs?.length > 0 ? (
+                [...allJobs]
+                  .slice(0, displayedAllJobs)
+                  .map((item, index) => (
+                    <ProjectCard
+                      data={item}
+                      key={index}
+                      length={allJobs?.length}
+                      index={index}
+                      myJob={false}
+                      userProfile={userProfile}
+                    />
+                  ))
+              ) : (
+                <p className="text-secondary my-2">No data to show</p>
+              ))}
+
+            {searchTerm === "" && (
+              <div>
+                <ul className="hidden text-secondary font-medium text-center rounded-t-3xl shadow sm:flex  ">
+                  <li className="w-full focus-within:z-10">
+                    <button
+                      className={
+                        activeJobs === "bestMatches"
+                          ? "inline-block w-full p-4 text-gray-900 bg-gray-100 border-r border-gray-200  rounded-tl-3xl active "
+                          : "inline-block w-full p-4 bg-white border-r border-gray-200  hover:text-gray-700 rounded-tl-3xl hover:bg-gray-50"
+                      }
+                      onClick={() => setActiveJobs("bestMatches")}
+                    >
+                      Best matches ({bestMatches?.length ?? 0})
+                    </button>
+                  </li>
+                  <li className="w-full focus-within:z-10">
+                    <button
+                      className={
+                        activeJobs === "bookmarks"
+                          ? "inline-block w-full p-4 text-gray-900 bg-gray-100 border-r border-gray-200   active "
+                          : "inline-block w-full p-4 bg-white border-r border-gray-200  hover:text-gray-700  hover:bg-gray-50"
+                      }
+                      onClick={() => setActiveJobs("bookmarks")}
+                    >
+                      Bookmarks ({bookmarks?.length ?? 0})
+                    </button>
+                  </li>
+                  <li className="w-full focus-within:z-10">
+                    <button
+                      className={
+                        activeJobs === "myJobs"
+                          ? "inline-block w-full p-4 text-gray-900 bg-gray-100 border-r border-gray-200  rounded-tr-3xl active "
+                          : "inline-block w-full p-4 bg-white border-r border-gray-200  hover:text-gray-700 rounded-tr-3xl hover:bg-gray-50"
+                      }
+                      onClick={() => setActiveJobs("myJobs")}
+                    >
+                      Your jobs ({myJobs?.length ?? 0})
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
 
             {loading ? (
               <div className="rounded-3xl max-w-screen-xl flex items-center justify-center h-[80vh]  mb-14 mx-auto">
                 <div className="loader"></div>
               </div>
-            ) : activeJobs === "remaining" ? (
-              remainingJobs?.length > 0 ? (
-                remainingJobs
-                  ?.slice(0, displayedRemainingJobs)
+            ) : searchTerm === "" && activeJobs === "bestMatches" ? (
+              bestMatches?.length > 0 ? (
+                [...bestMatches]
+                  .slice(0, displayedBestMatches)
                   .map((item, index) => (
                     <ProjectCard
                       data={item}
                       key={index}
-                      length={remainingJobs?.length}
+                      length={bestMatches?.length}
                       index={index}
                       myJob={false}
+                      userProfile={userProfile}
                     />
                   ))
               ) : (
-                <p className="text-secondary my-2">No data found</p>
+                <p className="text-secondary my-2">No data to show</p>
               )
-            ) : activeJobs === "matching" ? (
-              matchingJobs?.length > 0 ? (
-                matchingJobs
-                  ?.slice(0, displayedMatchingJobs)
+            ) : searchTerm === "" && activeJobs === "bookmarks" ? (
+              bookmarks?.length > 0 ? (
+                [...bookmarks]
+                  .reverse()
+                  .slice(0, displayedBookmarks)
                   .map((item, index) => (
                     <ProjectCard
                       data={item}
                       key={index}
-                      length={matchingJobs?.length}
+                      length={bookmarks?.length}
                       index={index}
-                      myJob={true}
+                      myJob={false}
+                      isBookmark={true}
+                      userProfile={userProfile}
                     />
                   ))
               ) : (
-                <p className="text-secondary my-2">No data found</p>
+                <p className="text-secondary my-2">No data to show</p>
+              )
+            ) : searchTerm === "" && activeJobs === "myJobs" ? (
+              myJobs?.length > 0 ? (
+                [...myJobs]
+                  .reverse()
+                  .slice(0, displayedMyJobs)
+                  .map((item, index) => (
+                    <ProjectCard
+                      data={item}
+                      key={index}
+                      length={myJobs?.length}
+                      index={index}
+                      myJob={true}
+                      userProfile={userProfile}
+                    />
+                  ))
+              ) : (
+                <p className="text-secondary my-2">No data to show</p>
               )
             ) : (
               ""
@@ -245,18 +304,18 @@ const Jobs = () => {
                 loading ? "hidden" : "flex"
               } items-center justify-center gap-x-2 `}
             >
-              {activeJobs === "matching" &&
-                matchingJobs?.length > displayedMatchingJobs && (
-                  <div className="flex items-center justify-center my-4">
-                    <button
-                      className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
-                      onClick={loadMoreJobs}
-                    >
-                      Load more jobs
-                    </button>
-                  </div>
-                )}
-              {activeJobs === "matching" && displayedMatchingJobs > 10 && (
+              {searchTerm !== "" && allJobs?.length > displayedAllJobs && (
+                <div className="flex items-center justify-center my-4">
+                  <button
+                    className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                    onClick={loadMoreJobs}
+                  >
+                    Load more jobs
+                  </button>
+                </div>
+              )}
+
+              {searchTerm !== "" && displayedAllJobs > 10 && (
                 <div className="flex items-center justify-center my-4">
                   <button
                     className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
@@ -272,8 +331,8 @@ const Jobs = () => {
                 loading ? "hidden" : "flex"
               } items-center justify-center gap-x-2 `}
             >
-              {activeJobs === "remaining" &&
-                remainingJobs?.length > displayedRemainingJobs && (
+              {activeJobs === "myJobs" &&
+                bestMatches?.length > displayedMyJobs && (
                   <div className="flex items-center justify-center my-4">
                     <button
                       className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
@@ -283,7 +342,62 @@ const Jobs = () => {
                     </button>
                   </div>
                 )}
-              {activeJobs === "remaining" && displayedRemainingJobs > 10 && (
+
+              {activeJobs === "myJobs" && displayedMyJobs > 10 && (
+                <div className="flex items-center justify-center my-4">
+                  <button
+                    className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                    onClick={showLessJobs}
+                  >
+                    Show less
+                  </button>
+                </div>
+              )}
+            </div>
+            <div
+              className={`${
+                loading ? "hidden" : "flex"
+              } items-center justify-center gap-x-2 `}
+            >
+              {activeJobs === "bookmarks" &&
+                bookmarks?.length > displayedBookmarks && (
+                  <div className="flex items-center justify-center my-4">
+                    <button
+                      className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                      onClick={loadMoreJobs}
+                    >
+                      Load more
+                    </button>
+                  </div>
+                )}
+              {activeJobs === "bookmarks" && displayedBookmarks > 10 && (
+                <div className="flex items-center justify-center my-4">
+                  <button
+                    className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                    onClick={showLessJobs}
+                  >
+                    Show less
+                  </button>
+                </div>
+              )}
+            </div>
+            <div
+              className={`${
+                loading ? "hidden" : "flex"
+              } items-center justify-center gap-x-2 `}
+            >
+              {activeJobs === "bestMatches" &&
+                bestMatches?.length > displayedBestMatches && (
+                  <div className="flex items-center justify-center my-4">
+                    <button
+                      className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
+                      onClick={loadMoreJobs}
+                    >
+                      Load more
+                    </button>
+                  </div>
+                )}
+              {activeJobs === "bestMatches" && displayedBestMatches > 10 && (
                 <div className="flex items-center justify-center my-4">
                   <button
                     className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"
@@ -309,167 +423,15 @@ const Jobs = () => {
       </div>
       <AnimatePresence initial={false} onExitComplete={() => null}>
         {showAddJobModal && (
-          <Modal>
-            <div className="p-8 rounded-2xl bg-white min-w-[768px] max-w-lg relative">
-              <div className="flex flex-col max-h-[80vh] p-1 overflow-y-auto">
-                <div className="flex items-center justify-between">
-                  <p className="text-3xl font-semibold">Post a new job</p>
-                  <RxCross1
-                    className="text-2xl cursor-pointer"
-                    onClick={() => setShowAddJobModal(false)}
-                  />
-                </div>
-                <div className="flex flex-col space-y-4 my-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    <label
-                      htmlFor="title"
-                      className="col-span-full font-medium"
-                    >
-                      Job Title
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      name="title"
-                      value={formData.title}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          title: e.target.value,
-                          user: userProfile?.user?._id,
-                        })
-                      }
-                      className="col-span-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-                      placeholder="Ex: Upwork"
-                      required
-                    />
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    {/* Input fields for budget and deadline */}
-                    <div className="w-1/2">
-                      <label htmlFor="budget" className=" font-medium">
-                        Budget (USD)
-                      </label>
-                      <input
-                        type="number"
-                        id="budget"
-                        name="budget"
-                        value={formData.budget}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            budget: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-                        placeholder="Enter budget"
-                        required
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <label htmlFor="deadline" className=" font-medium">
-                        Project Time (Days)
-                      </label>
-                      <input
-                        type="number"
-                        id="deadline"
-                        name="deadline"
-                        value={formData.deadline}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            deadline: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-                        placeholder="Ex: United States"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    {/* Input field for job title */}
-                    <label
-                      htmlFor="project_size"
-                      className="col-span-full font-medium"
-                    >
-                      Project Size
-                    </label>
-                    <select
-                      id="efficiency"
-                      name="efficiency"
-                      value={formData.project_size}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          project_size: e.target.value,
-                        })
-                      }
-                      className="cursor-pointer px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-full my-2"
-                      required
-                    >
-                      <option value="">Select Project Size</option>
-                      <option value="Small">Small</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Large">Large</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    {/* Input field for job_description */}
-                    <h3 className="font-medium">Job Description</h3>
-                    <div className="mt-2">
-                      <textarea
-                        id="job_description"
-                        rows={3}
-                        value={formData.job_description}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            job_description: e.target.value,
-                          })
-                        }
-                        className="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                        placeholder="Enter Job Description"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between space-x-2 pt-3 border-t">
-                <button
-                  type="button"
-                  className="px-4 py-3 font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none w-full"
-                  onClick={() => setShowAddJobModal(false)}
-                >
-                  Cancel
-                </button>
-                {addJobLoading ? (
-                  <button
-                    type="button"
-                    className={`px-4 py-4 font-medium text-white bg-primary bg-opabudget-80 border border-transparent rounded-md shadow-sm hover:bg-opacity-90 transition-all focus:outline-none w-full cursor-context-menu  `}
-                  >
-                    <div className="loaderProfile mx-auto"></div>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className={`px-4 py-3 font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-opacity-90 transition-all focus:outline-none w-full ${
-                      isSaveEnabled ? "" : "opabudget-50 cursor-not-allowed"
-                    }`}
-                    onClick={handleSaveJob}
-                    disabled={!isSaveEnabled}
-                  >
-                    Post
-                  </button>
-                )}
-              </div>
-            </div>
-          </Modal>
+          <JobsModal
+            setShowJobsModal={setShowAddJobModal}
+            showJobsModal={showAddJobModal}
+            userProfile={userProfile}
+          />
         )}
       </AnimatePresence>
       <Footer />
-    </div>
+    </ProtectedRoute>
   );
 };
 

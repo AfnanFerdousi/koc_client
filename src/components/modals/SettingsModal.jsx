@@ -3,17 +3,20 @@ import Modal from "../ui/Modal";
 import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addSettings,
-  editInfo,
   editSettings,
+  getCategories,
+  getCountries,
   getProfile,
 } from "../../axios/axios";
 import { setLoading } from "@/redux/reducers/loadingSlice";
 import { useForm } from "react-hook-form";
+import Select from "react-tailwindcss-select";
 
 const SettingsModal = ({
   setShowSettingsModal,
-  showAddSettingsModal,
+  showSettingsModal,
+  initialData,
+  isEdit,
   userProfile,
 }) => {
   const dispatch = useDispatch();
@@ -23,22 +26,92 @@ const SettingsModal = ({
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: initialData || {}, // Set default values from initialData if available
+    defaultValues: initialData || {},
   });
   const loading = useSelector((state) => state.loading.loading);
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [countriesOptions, setCountriesOptions] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(
+    initialData.country || null
+  );
+  const [selectedCity, setSelectedCity] = useState(initialData.city || null);
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialData.category || null
+  );
 
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch(setLoading(true));
+      try {
+        // Fetch countries data
+        const countriesResponse = await dispatch(getCountries());
+        setCountriesOptions(
+          countriesResponse?.payload?.data?.map((item) => ({
+            value: item.name,
+            label: item.name ?? "",
+            cities: item.cities,
+          }))
+        );
+
+        // Fetch categories data
+        const categoriesResponse = await dispatch(getCategories(""));
+        setCategoryOptions(
+          categoriesResponse?.payload?.data?.map((item) => ({
+            value: item._id,
+            label: item.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+      dispatch(setLoading(false));
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      const country = countriesOptions.find(
+        (c) => c.value === selectedCountry.value
+      );
+      setCities(
+        country
+          ? country?.cities?.map((city) => ({ value: city, label: city }))
+          : []
+      );
+    }
+  }, [selectedCountry, countriesOptions]);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      if (!selectedCountry?.cities?.includes(selectedCity?.value)) {
+        setSelectedCity("");
+      }
+    }
+  }, [selectedCountry, countriesOptions, selectedCity?.value]);
+
+  console.log(selectedCountry);
   const onSubmit = (data) => {
     dispatch(setLoading(true));
     dispatch(
-      editInfo({
+      editSettings({
         dynamicParams: { userId: userProfile?.user?._id },
-        bodyData: data,
+        bodyData: {
+          user: { first_name: data.first_name, lastName: data.lastName },
+          profile: {
+            country: selectedCountry.value,
+            city: selectedCity.value,
+            category: selectedCategory.value,
+          },
+        },
       })
     )
       .then(() => dispatch(getProfile()))
       .then(() => {
         dispatch(setLoading(false));
-        setShowAddSettingsModal(false);
+        setShowSettingsModal(false);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -47,65 +120,168 @@ const SettingsModal = ({
   };
 
   useEffect(() => {
-    if (!showAddSettingsModal) {
-      reset(); // Reset form when modal is closed
+    if (!showSettingsModal) {
+      reset();
     }
-  }, [showAddSettingsModal]);
-
+  }, [showSettingsModal]);
   return (
     <Modal>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-8 rounded-2xl bg-white min-w-[480px] max-w-lg "
+        className="p-8 rounded-2xl bg-white min-w-[480px] max-w-lg"
       >
         <div className="flex flex-col max-h-[80vh] p-1 overflow-y-auto">
           <div className="flex items-center justify-between">
-            <p className="text-3xl font-semibold">Edit your settings</p>
+            <p className="text-3xl font-semibold">Settings</p>
             <RxCross1
               className="text-2xl cursor-pointer"
-              onClick={() => setShowAddSettingsModal(!isEdit ? false : null)}
+              onClick={() => setShowSettingsModal(!isEdit ? false : null)}
             />
           </div>
           <div className="flex flex-col space-y-2 my-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
-              <label htmlFor="name" className="col-span-full font-medium">
-                Settings Name
+              <label htmlFor="first_name" className="col-span-full font-medium">
+                First Name
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                {...register("name", { required: true })}
+                id="first_name"
+                name="first_name"
+                {...register("first_name", { required: true })}
                 className="col-span-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
                 placeholder="Ex: English"
               />
             </div>
-            {errors.name && (
+            {errors.first_name && (
               <span className="w-full text-red-500 -mt-1 cursor-context-menu">
                 This field is required
               </span>
             )}
-            <div className="">
-              <label
-                htmlFor="efficiency"
-                className="col-span-full font-medium "
-              >
-                Efficiency
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+              <label htmlFor="lastName" className="col-span-full font-medium">
+                Last Name
               </label>
-              <select
-                id="efficiency"
-                name="efficiency"
-                {...register("efficiency", { required: true })}
-                className="cursor-pointer px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-full "
-              >
-                <option value="">Select Efficiency</option>
-                <option value="Basic">Basic</option>
-                <option value="Conversational">Conversational</option>
-                <option value="Fluent">Fluent</option>
-                <option value="Native">Native</option>
-              </select>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                {...register("lastName", { required: true })}
+                className="col-span-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="Ex: English"
+              />
             </div>
-            {errors.efficiency && (
+            {errors.lastName && (
+              <span className="w-full text-red-500 -mt-1 cursor-context-menu">
+                This field is required
+              </span>
+            )}
+
+            <div className="">
+              <label htmlFor="category" className="col-span-full font-medium ">
+                Category
+              </label>
+              <Select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e)}
+                options={categoryOptions}
+                isSearchable
+                loading={loading}
+                primaryColor={"lime"}
+                placeholder="Select Category"
+                classNames={{
+                  menuButton: ({ isDisabled }) =>
+                    `flex rounded-lg text-black border border-gray-300 p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
+                      isDisabled
+                        ? "bg-gray-100"
+                        : "bg-white hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
+                    }`,
+                  menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-2 mt-1.5 rounded-lg text-gray-700",
+                  listItem: ({ isSelected }) =>
+                    `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded ${
+                      isSelected
+                        ? `text-white bg-primary`
+                        : `text-black hover:bg-green-100 hover:text-primary`
+                    }`,
+                }}
+              />
+            </div>
+            {errors.category && (
+              <span className="w-full text-red-500  -mt-1 cursor-context-menu">
+                This field is required
+              </span>
+            )}
+            <div className="">
+              <label htmlFor="country" className="col-span-full font-medium ">
+                Country
+              </label>
+              <Select
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e)}
+                options={countriesOptions}
+                isSearchable
+                loading={loading}
+                primaryColor={"lime"}
+                placeholder="Select Category"
+                classNames={{
+                  menuButton: ({ isDisabled }) =>
+                    `flex rounded-lg text-black border border-gray-300 p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
+                      isDisabled
+                        ? "bg-gray-100"
+                        : "bg-white hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
+                    }`,
+                  menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-2 mt-1.5 rounded-lg text-gray-700",
+                  listItem: ({ isSelected }) =>
+                    `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded ${
+                      isSelected
+                        ? `text-white bg-primary`
+                        : `text-black hover:bg-green-100 hover:text-primary`
+                    }`,
+                }}
+              />
+            </div>
+            {errors.country && (
+              <span className="w-full text-red-500  -mt-1 cursor-context-menu">
+                This field is required
+              </span>
+            )}
+            <div className="">
+              <label htmlFor="city" className="col-span-full font-medium ">
+                City
+              </label>
+              <div className="relative">
+                {console.log(
+                  selectedCountry,
+                  selectedCity?.value,
+                  !!selectedCountry?.cities?.includes(selectedCity?.value)
+                )}
+                <Select
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e)}
+                  options={cities}
+                  isDisabled={cities?.length === 0}
+                  isSearchable
+                  loading={loading}
+                  primaryColor={"lime"}
+                  placeholder="Select City"
+                  classNames={{
+                    menuButton: ({ isDisabled }) =>
+                      `flex rounded-lg text-black border border-gray-300 p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
+                        isDisabled
+                          ? "bg-gray-100"
+                          : "bg-white hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
+                      }`,
+                    menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-2 mt-1.5 rounded-lg text-gray-700",
+                    listItem: ({ isSelected }) =>
+                      `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded ${
+                        isSelected
+                          ? `text-white bg-primary`
+                          : `text-black hover:bg-green-100 hover:text-primary`
+                      }`,
+                  }}
+                />
+              </div>
+            </div>
+            {selectedCity === "" && (
               <span className="w-full text-red-500  -mt-1 cursor-context-menu">
                 This field is required
               </span>
@@ -117,18 +293,28 @@ const SettingsModal = ({
           <button
             type="button"
             className="px-4 py-3 font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none w-full"
-            onClick={() => setShowAddSettingsModal(!isEdit ? false : null)}
+            onClick={() => setShowSettingsModal(!isEdit ? false : null)}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className={`px-4  font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-opacity-90 transition-all focus:outline-none w-full ${
-              loading || errors.name || errors.efficiency
+            className={`px-4 font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-opacity-90 transition-all focus:outline-none w-full ${
+              loading ||
+              errors.first_name ||
+              errors.lastName ||
+              errors.country ||
+              selectedCity === ""
                 ? "cursor-not-allowed py-[18px] opacity-50"
                 : "py-3"
             }`}
-            disabled={loading || errors.name || errors.efficiency}
+            disabled={
+              loading ||
+              errors.first_name ||
+              errors.lastName ||
+              errors.country ||
+              selectedCity === ""
+            }
           >
             {loading ? <div className="loaderProfile mx-auto "></div> : "Save"}
           </button>

@@ -7,6 +7,7 @@ import ProfileHeader from "../../components/profile/ProfileHeader";
 import LeftSideBar from "../../components/profile/LeftSideBar";
 import MainContent from "../../components/profile/MainContent";
 import Experiences from "@/components/profile/Experiences";
+import ProtectedRoute from "../../components/layouts/ProtectedRoute";
 
 export default function Profile() {
   // Selecting necessary data from Redux store
@@ -19,7 +20,7 @@ export default function Profile() {
   }, [userProfile]);
 
   return (
-    <div>
+    <ProtectedRoute>
       <Head>
         <title>My Profile | KocFreelancing</title>
       </Head>
@@ -29,20 +30,22 @@ export default function Profile() {
           <div className="loader"></div>
         </div>
       ) : (
-        <div className="border rounded-3xl max-w-screen-xl mt-28 mx-auto">
-          <ProfileHeader
-            isMine={true}
-            userProfile={userProfile}
-            isLoading={isLoading}
-          />
-          <div className="lg:grid grid-cols-3">
-            <LeftSideBar isMine={true} userProfile={userProfile} />
-            <MainContent isMine={true} userProfile={userProfile} />
+        <>
+          <div className="border rounded-3xl max-w-screen-xl mt-28 mx-auto">
+            <ProfileHeader
+              isMine={true}
+              userProfile={userProfile}
+              isLoading={isLoading}
+            />
+            <div className="lg:grid grid-cols-3">
+              <LeftSideBar isMine={true} userProfile={userProfile} />
+              <MainContent isMine={true} userProfile={userProfile} />
+            </div>
           </div>
-        </div>
+          <Experiences isMine={true} userProfile={userProfile} />
+        </>
       )}
-      <Experiences isMine={true} userProfile={userProfile} />
       <Footer />
-    </div>
+    </ProtectedRoute>
   );
 }

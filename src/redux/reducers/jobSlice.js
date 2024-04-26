@@ -1,45 +1,84 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getJobs } from "@/axios/axios";
-
-const initialState = {
-  jobs: {
-    data: [],
-  },
-  loading: false,
-  editLoading: false,
-  error: null,
-};
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  getAllJobs,
+  getBookmarks,
+  getJobById,
+  getJobs,
+  getMyJobs,
+} from "../../axios/axios";
 
 const jobSlice = createSlice({
   name: "job",
-  initialState,
+  initialState: {
+    jobs: [],
+    allJobs: [],
+    bookmarks: [],
+    myJobs: [],
+    jobData: {},
+    status: "idle",
+    error: null,
+  },
   reducers: {
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-    setEditLoading: (state, action) => {
-      state.editLoading = action.payload;
-    },
+    // Add any synchronous reducers here if needed
   },
   extraReducers: (builder) => {
-    // Handle actions from the getJobs async thunk
-    builder.addCase(getJobs.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(getJobs.fulfilled, (state, action) => {
-      // Update state.jobs.data with the inner 'data' array from the action payload directly
-      state.jobs.data = action.payload.data;
-      state.loading = false;
-    });
-    builder.addCase(getJobs.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload
-        ? action.payload.toString()
-        : "Unknown error";
-    });
+    builder
+      .addCase(getJobs.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getJobs.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.jobs = action.payload;
+      })
+      .addCase(getJobs.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(getAllJobs.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getAllJobs.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.allJobs = action.payload;
+      })
+      .addCase(getAllJobs.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(getBookmarks.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getBookmarks.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.bookmarks = action.payload;
+      })
+      .addCase(getBookmarks.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(getMyJobs.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getMyJobs.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.myJobs = action.payload;
+      })
+      .addCase(getMyJobs.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(getJobById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getJobById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.jobData = action.payload;
+      })
+      .addCase(getJobById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
   },
 });
-export const { setLoading, setEditLoading } = jobSlice.actions;
 
 export default jobSlice.reducer;

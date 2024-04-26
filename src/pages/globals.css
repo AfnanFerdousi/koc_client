@@ -510,12 +510,6 @@ form .ri-search-line {
   padding: 20px 50px; /* Adjust padding as needed */
 }
 
-.left-part {
-  display: flex;
-  justify-items: end;
-  justify-self: end;
-}
-
 .logo {
   font-size: 25px;
   font-weight: 700;
@@ -528,11 +522,10 @@ form .ri-search-line {
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  align-self: end;
 }
 
 .nav-text {
-  color: white !important;
+  color: white;
   margin-left: 20px !important;
   font-size: 14px !important;
   font-weight: 600 !important;
@@ -759,7 +752,7 @@ input:-webkit-autofill:active {
 .register-wrap {
   width: 440px;
   max-width: 100%;
-  height: 570px;
+  min-height: 680px;
   background-color: #2b2e38;
   border-radius: 10px;
 }

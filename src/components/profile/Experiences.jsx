@@ -10,6 +10,7 @@ import { setLoading } from "@/redux/reducers/loadingSlice";
 import { MdDelete, MdEdit } from "react-icons/md";
 import DeleteModal from "../modals/DeleteModal";
 import ExperienceModal from "../modals/ExperienceModal";
+import Description from "../ui/Description";
 
 const Experiences = ({ userProfile, isMine }) => {
   const dispatch = useDispatch();
@@ -123,11 +124,15 @@ const Experiences = ({ userProfile, isMine }) => {
                 ? "Present"
                 : format(new Date(item?.to), "MMMM, yyyy")}
             </p>
-            <p className="text-lg text-secondary">{item?.description}</p>
+            <Description
+              description={item?.description ? item?.description : ""}
+              maxLines={5}
+              className={"text-secondary text-lg"}
+            />
           </div>
         ))
       ) : (
-        <p className=" text-secondary my-2">No data found. </p>
+        <p className=" text-secondary my-2">No data to show. </p>
       )}
       <AnimatePresence initial={false} onExitComplete={() => null}>
         {showEditExperienceModal && (

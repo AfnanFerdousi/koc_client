@@ -15,6 +15,7 @@ import {
   resendEmail,
 } from "@/axios/axios";
 import toast from "react-hot-toast";
+import Head from "next/head";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -64,6 +65,7 @@ const LoginPage = () => {
       setLoading({ ...loading, login: false }); // Stop loading
       console.error("Login failed:", error);
     }
+    setLoading({ ...loading, login: false }); // Stop loading
   };
   console.log("im loading", loading);
   const handleForgetPassword = async () => {
@@ -135,6 +137,9 @@ const LoginPage = () => {
       justifyContent="center"
       alignItems="center"
     >
+      <Head>
+        <title>Login | KOC Freelancing</title>
+      </Head>
       <Grow in={true}>
         <Stack direction="row" justifyContent="center">
           {state === "login" ? (
@@ -147,7 +152,7 @@ const LoginPage = () => {
                     handleChange={handleChange}
                     Icon={<MarkunreadIcon sx={{ color: "#ffeba7" }} />}
                     helperText={""}
-                    placeHolder="Email or Username"
+                    placeHolder="Email Address"
                   />
                   <PasswordField
                     value={password}

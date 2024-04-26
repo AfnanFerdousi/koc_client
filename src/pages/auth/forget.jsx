@@ -7,6 +7,7 @@ import { resetPassword } from "@/axios/axios";
 import toast from "react-hot-toast";
 import { Stack, Typography } from "@mui/material";
 import PasswordField from "@/components/form/passwordField";
+import Head from "next/head";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -71,6 +72,9 @@ const LoginPage = () => {
       justifyContent="center"
       alignItems="center"
     >
+      <Head>
+        <title>Reset Password | KOC Freelancing</title>
+      </Head>
       <Grow in={true}>
         <Stack direction="row" justifyContent="center">
           {state === "reset" && (

@@ -75,6 +75,27 @@ const AddLanguageModal = ({
                 This field is required
               </span>
             )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+              <label
+                htmlFor="hourly_rate"
+                className="col-span-full font-medium"
+              >
+                Hourly rate (USD)
+              </label>
+              <input
+                type="number"
+                id="hourly_rate"
+                name="hourly_rate"
+                {...register("hourly_rate", { required: true })}
+                className="col-span-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="Ex: 15"
+              />
+            </div>
+            {errors.hourly_rate && (
+              <span className="w-full text-red-500 -mt-1 cursor-context-menu">
+                This field is required
+              </span>
+            )}
             <div className="">
               <label
                 htmlFor="description"

@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { verifyEmail } from "@/axios/axios";
 import toast from "react-hot-toast";
 import { Stack, Typography } from "@mui/material";
+import Head from "next/head";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -50,6 +51,9 @@ const LoginPage = () => {
       justifyContent="center"
       alignItems="center"
     >
+      <Head>
+        <title>Verify | KOC Freelancing</title>
+      </Head>
       <Grow in={true}>
         <Stack direction="row" justifyContent="center">
           {state === "verified" ? (
