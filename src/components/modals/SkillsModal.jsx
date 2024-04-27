@@ -94,19 +94,21 @@ const AddLanguageModal = ({ setShowSkillsModal, userProfile, initialData }) => {
                 isSearchable
                 isMultiple
                 loading={loading}
+                primaryColor={"lime"}
+                placeholder="Select Skills"
                 classNames={{
                   menuButton: ({ isDisabled }) =>
-                    `flex rounded-lg text-gray-500 border border-gray-300 p-2 shadow-sm transition-all duration-300 focus:outline-none ${
+                    `flex rounded-lg text-black border border-gray-300 p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
                       isDisabled
-                        ? "bg-gray-200"
-                        : "bg-white hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/20"
+                        ? "bg-gray-100"
+                        : "bg-white hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
                     }`,
-                  menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-3 mt-1.5 rounded-lg text-gray-700",
+                  menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-2 mt-1.5 rounded-lg text-gray-700",
                   listItem: ({ isSelected }) =>
-                    `block transition duration-200 p-3 rounded-lg cursor-pointer select-none truncate rounded ${
+                    `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded ${
                       isSelected
                         ? `text-white bg-primary`
-                        : `text-gray-500 hover:bg-green-100 hover:text-primary`
+                        : `text-black hover:bg-green-100 hover:text-primary`
                     }`,
                 }}
               />

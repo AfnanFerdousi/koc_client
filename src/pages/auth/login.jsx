@@ -16,6 +16,7 @@ import {
 } from "@/axios/axios";
 import toast from "react-hot-toast";
 import Head from "next/head";
+import { MdHome } from "react-icons/md";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -144,6 +145,13 @@ const LoginPage = () => {
         <Stack direction="row" justifyContent="center">
           {state === "login" ? (
             <div className="center-wrap">
+              <div
+                className="flex items-center justify-center text-gray-300 cursor-pointer mx-auto gap-x-1"
+                onClick={() => router.push(`/`)}
+              >
+                <MdHome className="text-xl " />
+                <p className="text-lg hover:underline ">KOC Freelancing</p>
+              </div>
               <h4 className="auth-title">Giriş Yap</h4>
               <Stack direction="row" justifyContent="center">
                 <Stack sx={{ width: "80%" }}>

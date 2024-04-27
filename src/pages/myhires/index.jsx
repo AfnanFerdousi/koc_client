@@ -107,7 +107,7 @@ const MyFreelancers = () => {
       <Navbar />
       <div className=" max-w-screen-xl  my-28 mx-auto grid grid-cols-4 gap-x-6">
         <div className="col-span-3">
-          <div className="relative flex items-center w-full border h-12 rounded-3xl focus-within:shadow-lg bg-white overflow-hidden">
+          <div className="relative flex items-center w-full border h-12 rounded-3xl  bg-white overflow-hidden">
             <div className="grid place-items-center h-full w-12 text-gray-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -327,7 +327,14 @@ const MyFreelancers = () => {
                   </div>
                 ))
             ) : (
-              <p className="text-secondary my-2">No data to show</p>
+              <div className="flex items-center justify-center">
+                <Image
+                  src="/assets/404.png"
+                  width={400}
+                  height={400}
+                  alt="No Data Found"
+                />
+              </div>
             )}
             <div
               className={`flex items-center justify-center gap-x-2 col-span-3 `}

@@ -278,7 +278,7 @@ export const getJobs = createAsyncThunk(
       user_id,
       minBudget = "",
       maxBudget = "",
-      size = "",
+      project_size = "",
       sortOrder = "",
       sortBy = "",
     },
@@ -286,7 +286,7 @@ export const getJobs = createAsyncThunk(
   ) => {
     try {
       const response = await Axios.get(
-        `${baseURL}/offer/${user_id}?minBudget=${minBudget}&maxBudget=${maxBudget}&project_size=${size}&sortOrder=${sortOrder}&sortBy=${sortBy}`,
+        `${baseURL}/offer/${user_id}?minBudget=${minBudget}&maxBudget=${maxBudget}&project_size=${project_size}&sortOrder=${sortOrder}&sortBy=${sortBy}`,
         config
       );
       return response.data;
@@ -303,15 +303,16 @@ export const getAllJobs = createAsyncThunk(
       searchTerm = "",
       minBudget = "",
       maxBudget = "",
-      size = "",
+      project_size = "",
       sortOrder = "",
       sortBy = "",
+      category = "",
     },
     thunkAPI
   ) => {
     try {
       const response = await Axios.get(
-        `${baseURL}/offer/all/${user_id}?searchTerm=${searchTerm}&minBudget=${minBudget}&maxBudget=${maxBudget}&project_size=${size}&sortOrder=${sortOrder}&sortBy=${sortBy}`,
+        `${baseURL}/offer/all/${user_id}?searchTerm=${searchTerm}&minBudget=${minBudget}&maxBudget=${maxBudget}&project_size=${project_size}&sortOrder=${sortOrder}&sortBy=${sortBy}&category=${category}`,
         config
       );
       return response.data;
@@ -450,15 +451,33 @@ export const getCategories = createAsyncThunk(
     }
   }
 );
+export const getPopularCategories = createAsyncThunk(
+  "category/fetchCategoryData",
+  async (_, thunkAPI) => {
+    try {
+      const response = await Axios.get(`${baseURL}/category/popular`, config);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 export const getCategoriesById = createAsyncThunk(
   "category/fetchCategoryById",
   async (
-    { id, search = "", country = "", overall_rating = "", hourly_rate = "" },
+    {
+      id,
+      search = "",
+      country = "",
+      overall_rating = "",
+      min_hourly_rate = "",
+      max_hourly_rate = "",
+    },
     thunkAPI
   ) => {
     try {
       const response = await Axios.get(
-        `${baseURL}/category/${id}?searchTerm=${search}&country=${country}&overall_rating=${overall_rating}&hourly_rate=${hourly_rate}`,
+        `${baseURL}/category/${id}?searchTerm=${search}&country=${country}&overall_rating=${overall_rating}&min_hourly_rate=${min_hourly_rate}&max_hourly_rate=${max_hourly_rate}`,
         config
       );
       return response.data;

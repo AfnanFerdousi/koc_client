@@ -221,7 +221,7 @@ const SettingsModal = ({
                 isSearchable
                 loading={loading}
                 primaryColor={"lime"}
-                placeholder="Select Category"
+                placeholder="Select Country"
                 classNames={{
                   menuButton: ({ isDisabled }) =>
                     `flex rounded-lg text-black border border-gray-300 p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${

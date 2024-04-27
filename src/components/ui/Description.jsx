@@ -32,16 +32,11 @@ const Description = ({
   };
 
   const renderDescription = () => {
-    if (!showFullDescription && lineCount > maxLines && lineCount !== 0) {
-      // If description exceeds maximum lines and full description is not shown
-      const truncatedDescription = description
-        .split("\n")
-        .slice(0, maxLines)
-        .join("\n");
-
+    const lines = description?.split("\n");
+    if (!showFullDescription && lines?.length > maxLines) {
       return (
         <>
-          {truncatedDescription}..
+          {lines?.slice(0, maxLines)?.join("\n")}..
           <span
             className="text-primary underline cursor-pointer hover:no-underline mx-1"
             onClick={toggleDescription}

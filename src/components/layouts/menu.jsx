@@ -186,6 +186,7 @@ const AccountMenu = () => {
                             !notifications?.length - 1 === index && "border-b"
                           }`}
                           key={index}
+                          onClick={() => item.url && router.push(item.url)}
                         >
                           <Avatar
                             sx={{

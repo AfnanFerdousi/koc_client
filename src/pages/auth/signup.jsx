@@ -1,108 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Head from "next/head";
-import { registerUser, resendEmail } from "@/axios/axios";
-import PasswordField from "@/components/form/passwordField";
-import StartAodornmentField from "@/components/form/startAodornmentField";
-import TextField from "@/components/form/textField";
+import {
+  registerUser,
+  resendEmail,
+  getCategories,
+  getCountries,
+} from "@/axios/axios";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import CategoryIcon from "@mui/icons-material/Category";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MarkunreadIcon from "@mui/icons-material/Markunread";
-import { MdOutlineCategory } from "react-icons/md";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { MdHome } from "react-icons/md";
 import { IconButton, Stack, Typography } from "@mui/material";
 import Grow from "@mui/material/Grow";
 import Link from "next/link";
-import { LockReset } from "@mui/icons-material";
-import { getCategories, getCountries } from "../../axios/axios";
 import Select from "react-tailwindcss-select";
+import { LockReset } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { editInfo } from "../../axios/axios";
 
 const SignupPage = () => {
+  // State variables
   const [state, setState] = useState("signup");
   const [showResendButton, setShowResendButton] = useState(true);
   const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState({
     signup: false,
     resendEmail: false,
+    fetchData: false,
+    info: false,
   });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const dispatch = useDispatch();
-
-  const onsubmit = async (data) => {
-    setLoading({ ...loading, signup: true }); // Start loading for signup
-    try {
-      const response = await dispatch(
-        registerUser({
-          dynamicParams: {},
-          bodyData: {
-            ...data,
-            country: selectedCountry.value,
-            city: selectedCity.value,
-            category: selectedCategory.value,
-            role: "user",
-          },
-        })
-      );
-      console.log("response here", response);
-      if (
-        response.payload.statusCode === 200 ||
-        response.payload.statusCode === 201
-      ) {
-        setState("verify");
-        dispatch(
-          resendEmail({
-            dynamicParams: { email: data.email },
-            bodyData: { email: data.email },
-          })
-        );
-      }
-    } catch (error) {
-      console.error("Registration failed:", error);
-    } finally {
-      setLoading({ ...loading, signup: false }); // Stop loading for signup
-    }
-  };
-
-  const handleResendEmail = async (email) => {
-    setShowResendButton(false);
-    setTimer(60);
-    setLoading({ ...loading, resendEmail: true }); // Start loading for resend email
-    try {
-      const response = await dispatch(
-        resendEmail({
-          dynamicParams: { email: email },
-          bodyData: { email: email },
-        })
-      );
-      console.log("response here", response);
-      if (
-        response.payload.statusCode === 200 ||
-        response.payload.statusCode === 201
-      ) {
-        toast.success("Email sent successfully!");
-      }
-    } catch (error) {
-      console.error("Resend email failed:", error);
-    } finally {
-      setLoading({ ...loading, resendEmail: false }); // Stop loading for resend email
-    }
-  };
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [countriesOptions, setCountriesOptions] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [characterCount, setCharacterCount] = useState(0);
+  const [userId, setUserId] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
+  const [disableResendButton, setDisableResendButton] = useState(false);
 
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  // Form validation using react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  // Fetch categories and countries data
   useEffect(() => {
     const fetchData = async () => {
-      setLoading({ ...loading, signup: true });
+      setLoading({ ...loading, fetchData: true });
       try {
         // Fetch countries data
         const countriesResponse = await dispatch(getCountries());
@@ -125,12 +79,13 @@ const SignupPage = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-      setLoading({ ...loading, signup: false });
+      setLoading({ ...loading, fetchData: false });
     };
 
     fetchData();
   }, [dispatch]);
 
+  // Update cities based on selected country
   useEffect(() => {
     if (selectedCountry) {
       const country = countriesOptions.find(
@@ -143,14 +98,117 @@ const SignupPage = () => {
       );
     }
   }, [selectedCountry, countriesOptions]);
+
+  // Clear selected city if not available in selected country
   useEffect(() => {
-    if (selectedCountry) {
-      if (!selectedCountry?.cities?.includes(selectedCity?.value)) {
-        setSelectedCity("");
-      }
+    if (
+      selectedCountry &&
+      !selectedCountry?.cities?.includes(selectedCity?.value)
+    ) {
+      setSelectedCity("");
     }
   }, [selectedCountry, countriesOptions, selectedCity?.value]);
 
+  // Handle form submission
+  const onsubmit = async (data) => {
+    setLoading({ ...loading, signup: true });
+    try {
+      // Register user
+      const response = await dispatch(
+        registerUser({
+          dynamicParams: {},
+          bodyData: {
+            ...data,
+            country: selectedCountry.value,
+            city: selectedCity.value,
+            category: selectedCategory.value,
+            role: "user",
+          },
+        })
+      );
+      if (
+        response.payload.statusCode === 200 ||
+        response.payload.statusCode === 201
+      ) {
+        setUserId(response.payload.data._id);
+        setUserEmail(data.email);
+        setState("info");
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+    } finally {
+      setLoading({ ...loading, signup: false });
+    }
+  };
+
+  // Handle info update
+  const handleInfoUpdate = async (data) => {
+    setLoading({ ...loading, info: true });
+    try {
+      const response = await dispatch(
+        editInfo({
+          dynamicParams: {
+            userId: userId,
+          },
+          bodyData: data,
+        })
+      );
+      if (
+        response.payload.statusCode === 200 ||
+        response.payload.statusCode === 201
+      ) {
+        setState("verify");
+        dispatch(
+          resendEmail({
+            dynamicParams: { email: userEmail },
+            bodyData: { email: userEmail },
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Resend email failed:", error);
+    } finally {
+      setLoading({ ...loading, resendEmail: false });
+    }
+  };
+  // Handle resending verification email
+  const handleResendEmail = async () => {
+    setShowResendButton(false);
+    setLoading({ ...loading, resendEmail: true });
+    try {
+      const response = await dispatch(
+        resendEmail({
+          dynamicParams: { email: userEmail },
+          bodyData: { email: userEmail },
+        })
+      );
+      if (
+        response.payload.statusCode === 200 ||
+        response.payload.statusCode === 201
+      ) {
+        // Start the timer
+        setTimer(60);
+        setDisableResendButton(true);
+      }
+    } catch (error) {
+      console.error("Resend email failed:", error);
+    } finally {
+      setLoading({ ...loading, resendEmail: false });
+    }
+  };
+  // Update timer every second
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else {
+      setDisableResendButton(false);
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
   return (
     <Stack
       className="auth-back"
@@ -165,18 +223,31 @@ const SignupPage = () => {
         <Stack direction="row" justifyContent="center">
           {state === "signup" && (
             <div className="register-wrap rounded-none md:rounded-[10px]">
+              <div
+                className="flex items-center justify-center text-gray-300 cursor-pointer mx-auto gap-x-1"
+                onClick={() => router.push(`/`)}
+              >
+                <MdHome className="text-xl " />
+                <p className="text-lg hover:underline ">KOC Freelancing</p>
+              </div>
               <h4 className="auth-title">Kayıt Ol</h4>
               <form onSubmit={handleSubmit(onsubmit)}>
                 <Stack direction="row" justifyContent="center">
                   <Stack sx={{ width: "80%" }}>
                     <Stack direction="row">
                       <div className="p-1 w-full">
+                        <label
+                          htmlFor="category"
+                          className="col-span-full font-medium my-1"
+                        >
+                          First Name
+                        </label>
                         <input
                           type="text"
                           id="first_name"
                           name="first_name"
                           {...register("first_name", { required: true })}
-                          className=" bg-[#1f2029] focus:text-[#a09fa3] text-base border-none rounded-md border  p-3 w-full !outline-none  font-poppins"
+                          className=" bg-[#1f2029] focus:text-[#a09fa3] text-base border-none rounded-md border my-1 p-3 w-full !outline-none  font-poppins"
                           placeholder="First Name"
                         />
                         {errors.first_name && (
@@ -186,12 +257,18 @@ const SignupPage = () => {
                         )}
                       </div>
                       <div className="p-1 w-full">
+                        <label
+                          htmlFor="category"
+                          className="col-span-full font-medium my-1"
+                        >
+                          Last Name
+                        </label>
                         <input
                           type="text"
                           id="lastName"
                           name="lastName"
                           {...register("lastName", { required: true })}
-                          className=" bg-[#1f2029]  text-base border-none rounded-md border  p-3 w-full !outline-none  font-poppins"
+                          className=" bg-[#1f2029] my-1  text-base border-none rounded-md border  p-3 w-full !outline-none  font-poppins"
                           placeholder="Last Name"
                         />
                         {errors.lastName && (
@@ -218,118 +295,113 @@ const SignupPage = () => {
                         placeholder="Select Category"
                         classNames={{
                           menuButton: ({ isDisabled }) =>
-                            `flex rounded-lg  text-base border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
+                            `flex rounded-lg text-gray-100 my-1 border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
                               isDisabled
-                                ? "bg-gray-100"
+                                ? "text-gray-400"
                                 : "bg-[#1f2029] hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
                             }`,
-                          menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg border rounded py-2 mt-1.5 rounded-lg text-base",
+                          menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg  rounded py-2 mt-1.5 rounded-lg text-gray-300",
                           listItem: ({ isSelected }) =>
-                            `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-base ${
+                            `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-gray-300 ${
                               isSelected
-                                ? `text-white bg-primary`
-                                : `text-base hover:bg-green-100 hover:text-primary`
+                                ? `bg-gray-300 text-gray-900`
+                                : `hover:bg-gray-300 hover:text-gray-900`
                             }`,
                         }}
                       />
+                      {!selectedCategory && (
+                        <span className="w-full text-red-400  -mt-1 cursor-context-menu">
+                          This field is required
+                        </span>
+                      )}
                     </div>
-                    {errors.category && (
-                      <span className="w-full text-red-500  -mt-1 cursor-context-menu">
-                        This field is required
-                      </span>
-                    )}
-                    <div className="">
-                      <label
-                        htmlFor="country"
-                        className="col-span-full font-medium my-1"
-                      >
-                        Country
-                      </label>
-                      <Select
-                        value={selectedCountry}
-                        onChange={(e) => setSelectedCountry(e)}
-                        options={countriesOptions}
-                        isSearchable
-                        loading={loading.signup}
-                        primaryColor={"lime"}
-                        placeholder="Select Country"
-                        classNames={{
-                          menuButton: ({ isDisabled }) =>
-                            `flex rounded-lg  text-base border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
-                              isDisabled
-                                ? "bg-gray-100"
-                                : "bg-[#1f2029] hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
-                            }`,
-                          menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg border rounded py-2 mt-1.5 rounded-lg text-base",
-                          listItem: ({ isSelected }) =>
-                            `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-base ${
-                              isSelected
-                                ? `text-white bg-primary`
-                                : `text-base hover:bg-green-100 hover:text-primary`
-                            }`,
-                        }}
-                      />
-                    </div>
-                    {errors.country && (
-                      <span className="w-full text-red-500  -mt-1 cursor-context-menu">
-                        This field is required
-                      </span>
-                    )}
-                    <div className="">
-                      <label
-                        htmlFor="city"
-                        className="col-span-full font-medium my-1"
-                      >
-                        City
-                      </label>
-                      <div className="relative">
-                        {console.log(
-                          selectedCountry,
-                          selectedCity?.value,
-                          !!selectedCountry?.cities?.includes(
-                            selectedCity?.value
-                          )
-                        )}
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-x-2">
+                      <div className="w-full">
+                        <label
+                          htmlFor="country"
+                          className="col-span-full font-medium "
+                        >
+                          Country
+                        </label>
                         <Select
-                          value={selectedCity}
-                          onChange={(e) => setSelectedCity(e)}
-                          options={cities}
-                          isDisabled={cities?.length === 0}
+                          value={selectedCountry}
+                          onChange={(e) => setSelectedCountry(e)}
+                          options={countriesOptions}
                           isSearchable
-                          loading={loading.signup}
+                          // loading={loading.signup}
                           primaryColor={"lime"}
-                          placeholder="Select City"
+                          placeholder="Select Country"
                           classNames={{
                             menuButton: ({ isDisabled }) =>
-                              `flex rounded-lg  text-base border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
+                              `flex rounded-lg text-gray-100 my-1 border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
                                 isDisabled
-                                  ? "bg-gray-100"
+                                  ? "text-gray-400"
                                   : "bg-[#1f2029] hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
                               }`,
-                            menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg border rounded py-2 mt-1.5 rounded-lg text-base",
+                            menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg  rounded py-2 mt-1.5 rounded-lg text-gray-300",
                             listItem: ({ isSelected }) =>
-                              `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-base ${
+                              `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-gray-300 ${
                                 isSelected
-                                  ? `text-white bg-primary`
-                                  : `text-base hover:bg-green-100 hover:text-primary`
+                                  ? `bg-gray-300 text-gray-900`
+                                  : `hover:bg-gray-300 hover:text-gray-900`
                               }`,
                           }}
                         />
+                        {!selectedCountry && (
+                          <span className="w-full text-red-400  -mt-1 cursor-context-menu">
+                            This field is required
+                          </span>
+                        )}
+                      </div>
+                      <div className="w-full">
+                        <label
+                          htmlFor="city"
+                          className="col-span-full font-medium my-1"
+                        >
+                          City
+                        </label>
+                        <div className="relative">
+                          <Select
+                            value={selectedCity}
+                            onChange={(e) => setSelectedCity(e)}
+                            options={cities}
+                            isDisabled={cities?.length === 0}
+                            isSearchable
+                            // loading={loading.signup}
+                            primaryColor={"lime"}
+                            placeholder="Select Your City"
+                            classNames={{
+                              menuButton: ({ isDisabled }) =>
+                                `flex rounded-lg text-gray-100 my-1 border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
+                                  isDisabled
+                                    ? "text-gray-400 bg-[#1f2029]"
+                                    : "bg-[#1f2029] hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
+                                }`,
+                              menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg  rounded py-2 mt-1.5 rounded-lg text-gray-300",
+                              listItem: ({ isSelected }) =>
+                                `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-gray-300 ${
+                                  isSelected
+                                    ? `bg-gray-300 text-gray-900`
+                                    : `hover:bg-gray-300 hover:text-gray-900`
+                                }`,
+                            }}
+                          />
+                          {(!selectedCity || selectedCity === "") && (
+                            <span className="w-full text-red-400  -mt-1 cursor-context-menu">
+                              This field is required
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    {selectedCity === "" && (
-                      <span className="w-full text-red-500  -mt-1 cursor-context-menu">
-                        This field is required
-                      </span>
-                    )}
                     <div className="p-1">
                       <label
                         htmlFor="Phone"
-                        className="col-span-full font-medium my-1"
+                        className="col-span-full font-medium "
                       >
                         Phone
                       </label>
-                      <div className="bg-[#1f2029] rounded-md   p-3 w-full flex items-center ">
+                      <div className="bg-[#1f2029] rounded-md my-1  p-3 w-full flex items-center ">
                         <LocalPhoneIcon sx={{ color: "#ffeba7" }} />
                         <input
                           type="tel"
@@ -353,7 +425,7 @@ const SignupPage = () => {
                       >
                         Email
                       </label>
-                      <div className="bg-[#1f2029] rounded-md   p-3 w-full flex items-center ">
+                      <div className="bg-[#1f2029] rounded-md my-1  p-3 w-full flex items-center ">
                         <MarkunreadIcon sx={{ color: "#ffeba7" }} />
                         <input
                           type="email"
@@ -373,19 +445,22 @@ const SignupPage = () => {
                     <div className="p-1">
                       <label
                         htmlFor="country"
-                        className="col-span-full font-medium my-1"
+                        className="col-span-full font-medium my-2"
                       >
                         Password
                       </label>
-                      <div className="bg-[#1f2029] rounded-md   p-3 w-full flex items-center ">
+                      <div className="bg-[#1f2029] rounded-md  my-1 p-3 w-full flex items-center ">
                         <LockReset sx={{ color: "#ffeba7" }} />
                         <input
                           type="password"
                           id="password"
                           name="password"
-                          {...register("password", { required: true })}
+                          {...register("password", {
+                            required: true,
+                            minLength: 6,
+                          })}
                           className=" mx-2 bg-[#1f2029]  text-base border-none  w-full !outline-none  font-poppins"
-                          placeholder="password"
+                          placeholder="Password"
                         />
                       </div>
                     </div>
@@ -418,16 +493,145 @@ const SignupPage = () => {
               </Stack>
             </div>
           )}
-          {state === "verify" ? (
-            <div className="reset-wrap">
-              <Stack direction="row" justifyContent="start" alignItems="center">
+          {state === "info" ? (
+            <form
+              className="reset-wrap"
+              onSubmit={handleSubmit(handleInfoUpdate)}
+            >
+              <Stack
+                direction="row"
+                justifyContent="start"
+                alignItems="center"
+                marginBottom={2}
+              >
                 <IconButton
                   onClick={() => setState("signup")}
                   sx={{ marginLeft: "20px" }}
                 >
                   <ArrowBackIosNewIcon sx={{ color: "grey" }} />
                 </IconButton>
-                <h4 className="auth-title">Verify Your Email</h4>
+                <h4 className="text-xl ">Tell us about yourself</h4>
+              </Stack>
+              <Stack direction="row" justifyContent="center">
+                <Stack sx={{ width: "80%" }}>
+                  <div className="p-1">
+                    <label
+                      htmlFor="Title"
+                      className="col-span-full font-medium "
+                    >
+                      Your Work Title
+                    </label>
+                    <div className="bg-[#1f2029] rounded-md my-1  p-3 w-full flex items-center ">
+                      <input
+                        type="text"
+                        id="sub_title"
+                        name="sub_title"
+                        {...register("sub_title", { required: true })}
+                        className=" mx-2 bg-[#1f2029]  text-base border-none  w-full !outline-none  font-poppins"
+                        placeholder="Ex. Senior QA Engineer"
+                      />
+                    </div>
+                  </div>
+                  {errors.sub_title && (
+                    <span className="w-full text-red-400 -mt-1 cursor-context-menu ml-1">
+                      This field is required
+                    </span>
+                  )}
+                  <div className="p-1">
+                    <label
+                      htmlFor="hourly_rate"
+                      className="col-span-full font-medium "
+                    >
+                      Your Hourly Rate (USD)
+                    </label>
+                    <div className="bg-[#1f2029] rounded-md my-1  p-3 w-full flex items-center ">
+                      <input
+                        type="number"
+                        id="hourly_rate"
+                        name="hourly_rate"
+                        {...register("hourly_rate", { required: true })}
+                        className=" mx-2 bg-[#1f2029]  text-base border-none  w-full !outline-none  font-poppins"
+                        placeholder="Ex. 20"
+                      />
+                    </div>
+                  </div>
+                  {errors.hourly_rate && (
+                    <span className="w-full text-red-400 -mt-1 cursor-context-menu ml-1">
+                      This field is required
+                    </span>
+                  )}
+                  <div className="p-1">
+                    <label
+                      htmlFor="description"
+                      className="col-span-full font-medium my-1"
+                    >
+                      Description
+                    </label>
+                    <div className="bg-[#1f2029] rounded-md my-1  p-3 w-full flex items-center ">
+                      <textarea
+                        rows={6}
+                        id="description"
+                        name="description"
+                        {...register("description", {
+                          required: true,
+                          minLength: 100,
+                          maxLength: 5000,
+                        })}
+                        className="mx-2 bg-[#1f2029] text-base border-none w-full !outline-none font-poppins"
+                        placeholder="Example: I often describe myself as a QA professional in a developer's body, having the mindset to break things but the toolset to create and restore. I also have several years of experience as a QA Engineer."
+                        onChange={(e) =>
+                          setCharacterCount(e.target.value.length)
+                        }
+                      />
+                    </div>
+                    <p className="text-end text-gray-300 text-sm">
+                      {5000 - characterCount} characters left
+                    </p>
+                    {errors.description?.type === "required" && (
+                      <span className="text-red-400">
+                        This field is required
+                      </span>
+                    )}
+                    {errors.description?.type === "minLength" && (
+                      <span className="text-red-400">
+                        Description must be at least 100 characters
+                      </span>
+                    )}
+                    {errors.description?.type === "maxLength" && (
+                      <span className="text-red-400">
+                        Description cannot exceed 5000 characters
+                      </span>
+                    )}
+                  </div>
+                </Stack>
+              </Stack>
+              <Stack direction="row" justifyContent="center">
+                {loading.info ? (
+                  <div className="btn !cursor-context-menu !px-16 hover:bg-[#ffeaa7af]">
+                    <div className="loaderAuth mx-auto"></div>{" "}
+                  </div>
+                ) : (
+                  <button className="btn " type="submit">
+                    <p>Submit</p>{" "}
+                  </button>
+                )}
+              </Stack>
+            </form>
+          ) : state === "verify" ? (
+            <div className="reset-wrap">
+              <Stack
+                direction="row"
+                justifyContent="start"
+                alignItems="center"
+                marginBottom={2}
+              >
+                <IconButton
+                  onClick={() => setState("info")}
+                  sx={{ marginLeft: "20px" }}
+                >
+                  <ArrowBackIosNewIcon sx={{ color: "grey" }} />
+                </IconButton>
+                <h4 className="text-xl">Verify Your Email</h4>
               </Stack>
               <Stack
                 direction="column"
@@ -442,10 +646,12 @@ const SignupPage = () => {
                 <br />
                 <Typography sx={{ color: "#c4c3ca" }}>
                   Didn&apos;t receive an email?{" "}
-                  {showResendButton ? (
+                  {timer < 1 ? (
                     <span
-                      className="auth-change-btn cursor-pointer"
-                      onClick={() => handleResendEmail(email)}
+                      className={`auth-change-btn cursor-pointer ${
+                        disableResendButton ? "hidden" : ""
+                      }`}
+                      onClick={() => handleResendEmail()}
                     >
                       Resend email.
                     </span>

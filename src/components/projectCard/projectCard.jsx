@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { FaRegBookmark } from "react-icons/fa";
-import { MdDelete, MdEdit, MdOutlineLocationOn } from "react-icons/md";
+import {
+  MdDelete,
+  MdEdit,
+  MdOutlineLocationOn,
+  MdVerified,
+} from "react-icons/md";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import Description from "../ui/Description";
 import { useRouter } from "next/router";
@@ -40,9 +45,11 @@ const ProjectCard = ({
     skills,
     job_description,
     profile,
+    user,
     category,
     hasBeenBookmarked,
   } = isBookmark ? data?.offer : data;
+
   const router = useRouter();
   const handleClick = () => {
     router.push(`/job/${_id}`);
@@ -190,7 +197,6 @@ const ProjectCard = ({
           {category?.name}
         </button>
       </div>
-
       <div className="flex items-center  ">
         <p className=" pt-3 text-secondary ">
           Est. budget : <span className="font-medium">${budget}</span> |
@@ -209,6 +215,8 @@ const ProjectCard = ({
       />
       <div className="flex justify-start gap-x-6 items-center">
         {profile?.payment_verified ? (
+          profile?.payment_verified
+        ) : user?.profile?.payment_verified ? (
           <div className="flex items-center gap-x-1 text-secondary">
             <RiVerifiedBadgeFill /> Payment Verified{" "}
           </div>
@@ -221,7 +229,11 @@ const ProjectCard = ({
         <div className=" text-secondary flex items-center gap-x-2 font-medium">
           <Rating
             style={{ maxWidth: 100 }}
-            value={profile?.overall_rating ?? 0}
+            value={
+              profile?.client_rating
+                ? profile?.client_rating
+                : user?.profile?.client_rating ?? 0
+            }
             readOnly
             itemStyles={{
               itemShapes: StickerStar,
@@ -232,22 +244,43 @@ const ProjectCard = ({
 
           <p className="font-medium  text-secondary">
             {" "}
-            {profile?.overall_rating?.toFixed(2)}
+            {profile?.client_overall_reviews
+              ? profile?.client_overall_reviews?.toFixed(2)
+              : user?.profile?.client_overall_reviews?.toFixed(2)}
           </p>
-          <p>({profile?.completed_projects ?? 0} reviews)</p>
+          <p>
+            (
+            {profile?.client_reviews?.length
+              ? profile?.client_reviews?.length
+              : user?.profile?.client_reviews?.length ?? 0}{" "}
+            reviews)
+          </p>
         </div>
         <p className="text-md  text-secondary">
-          <span className="font-medium">${profile?.amount_earned ?? 0}</span>{" "}
+          <span className="font-medium">
+            $
+            {profile?.amount_earned
+              ? profile?.amount_earned
+              : user?.profile?.amount_earned ?? 0}
+          </span>{" "}
           spent
+        </p>
+        <p className="text-md  text-secondary">
+          <span className="font-medium">
+            {profile?.total_hired
+              ? profile?.total_hired
+              : user?.profile?.total_hired ?? 0}
+          </span>{" "}
+          hired
         </p>
         <p className="flex items-center">
           <MdOutlineLocationOn className="text-md mr-1 font-medium text-secondary" />
           <span className="text-md text-secondary ">
-            {profile?.city}, {profile?.country}
+            {profile?.city ? profile?.city : user?.profile?.city},{" "}
+            {profile?.country ? profile?.country : user?.profile?.country}
           </span>
         </p>
       </div>
-
       <div className="flex flex-wrap gap-x-2  gap-y-2 my-3">
         {skills?.map((element, idx) => (
           <div key={`skillset-${idx}`}>
@@ -259,8 +292,15 @@ const ProjectCard = ({
       </div>
       <p className="text-md  text-secondary">
         Proposals :{" "}
-        <span className="font-medium">{data?.proposals?.length ?? 0}</span>
+        <span className="font-medium">{data?.proposals?.length ?? 0} </span>
       </p>
+      {data?.proposals?.some(
+        (proposal) => proposal.created_by === userProfile?.user?._id
+      ) && (
+        <p className="text-md  text-secondary font-medium flex items-center gap-x-1 mt-1">
+          <MdVerified /> You've already submitted your proposal on this job
+        </p>
+      )}
       <AnimatePresence initial={false} onExitComplete={() => null}>
         {showEditJobModal && (
           <JobsModal

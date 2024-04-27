@@ -3,6 +3,17 @@
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900");
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .hero {
   height: 100%;
   width: 100%;
@@ -627,9 +638,6 @@ input:-webkit-autofill:active {
   padding-top: 100px;
 }
 
-.footer-content {
-  height: 450px;
-}
 .footer-col {
   width: 100%;
 }
@@ -738,16 +746,20 @@ input:-webkit-autofill:active {
 .center-wrap {
   width: 440px;
   max-width: 100%;
-  height: 500px;
+  min-height: 400px;
   background-color: #2b2e38;
   border-radius: 10px;
+  margin: 40px 0;
+  padding: 20px 0;
 }
 .reset-wrap {
   width: 440px;
   max-width: 100%;
-  height: 300px;
+  min-height: 300px;
   background-color: #2b2e38;
   border-radius: 10px;
+  margin: 40px 0;
+  padding: 20px 0;
 }
 .register-wrap {
   width: 440px;
@@ -755,10 +767,10 @@ input:-webkit-autofill:active {
   min-height: 680px;
   background-color: #2b2e38;
   border-radius: 10px;
+  padding: 20px 0px;
+  margin: 40px 0;
 }
 .auth-title {
-  margin: 30px;
-  padding: 10px;
   text-align: center;
   font-size: 30px;
 }
@@ -979,7 +991,7 @@ input:-webkit-autofill:active {
   .center-wrap,
   .register-wrap {
     width: auto; /* Set width to auto to allow it to expand */
-    max-width: calc(100% - 40px); /* Adjusting for padding */
+    max-width: calc(100% - 20px); /* Adjusting for padding */
     height: auto; /* Allow height to adjust according to content */
     padding: 20px; /* Adjust padding */
     border-radius: 8px;

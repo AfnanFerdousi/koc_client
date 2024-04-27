@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import Head from "next/head";
 import { getCategories } from "../../axios/axios";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const Categories = () => {
   const dispatch = useDispatch();
@@ -51,8 +52,8 @@ const Categories = () => {
         <title>All Categories | KocFreelancing</title>
       </Head>
       <Navbar />
-      <div className=" max-w-screen-xl  my-28 mx-auto  gap-x-6">
-        <div className="relative flex items-center w-full border h-12 rounded-3xl focus-within:shadow-lg bg-white overflow-hidden">
+      <div className=" max-w-screen-xl  my-28 mx-4 lg:mx-auto  gap-x-6">
+        <div className="relative flex items-center w-full border h-12 rounded-3xl  bg-white overflow-hidden">
           <div className="grid place-items-center h-full w-12 text-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,13 +79,13 @@ const Categories = () => {
             onChange={(event) => setSearchTerm(event.target.value)}
           />
         </div>
-        <p className="my-8 font-medium  text-2xl">
+        <p className="my-8 font-medium  text-2xl ">
           Categories you're looking for ({categories?.length})
         </p>
 
-        <div className=" max-w-screen-xl grid grid-cols-3  gap-x-6 gap-y-24 mt-20 mb-14 mx-auto">
+        <div className=" max-w-screen-xl grid grid-cols-1 lg:grid-cols-3  gap-x-6 gap-y-24 mt-20 mb-14 mx-auto">
           {categoryLoading ? (
-            <div className="flex items-center col-span-3 justify-center h-[50vh]  mb-14 mx-auto">
+            <div className="flex items-center col-span-1 lg:col-span-3 justify-center h-[50vh]  mb-14 mx-auto">
               <div className="loader"></div>
             </div>
           ) : categories?.length > 0 ? (
@@ -111,7 +112,7 @@ const Categories = () => {
                       <p>No image found</p>
                     )}
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 -mt-8">
                     <h5 className="mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
                       {item?.name}
                     </h5>
@@ -121,6 +122,9 @@ const Categories = () => {
                       maxWords={20}
                       className={"block font-sans text-base   "}
                     />
+                    <p className="font-medium mt-2">
+                      Total Freelancers : {item?.freelancers ?? 0}
+                    </p>
                   </div>
                   <div className="p-6 pt-0 mt-auto">
                     <button
@@ -133,10 +137,17 @@ const Categories = () => {
                 </div>
               ))
           ) : (
-            <p className="text-secondary my-2">No data to show</p>
+            <div className="flex items-center justify-center">
+              <Image
+                src="/assets/404.png"
+                width={400}
+                height={400}
+                alt="No Data Found"
+              />
+            </div>
           )}
           <div
-            className={`flex items-center justify-center gap-x-2 col-span-3 `}
+            className={`flex items-center justify-center gap-x-2 lg:col-span-3 `}
           >
             {categories?.length > displayedRemainingReviews && (
               <div className="flex items-center justify-center my-4">

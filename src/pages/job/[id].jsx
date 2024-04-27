@@ -245,7 +245,7 @@ const Job = () => {
             <div className="loader"></div>
           </div>{" "}
           <div className="col-span-1">
-            <div className=" w-full border rounded-3xl h-[30vh] focus-within:shadow-lg bg-[#fff] overflow-hidden py-3 px-6"></div>
+            <div className=" w-full border rounded-3xl h-[30vh]  bg-[#fff] overflow-hidden py-3 px-6"></div>
           </div>
         </div>
       ) : (
@@ -803,7 +803,14 @@ const Job = () => {
                       ))}
                   </>
                 ) : (
-                  "No data to show"
+                  <div className="flex items-center justify-center">
+                    <Image
+                      src="/assets/404.png"
+                      width={400}
+                      height={400}
+                      alt="No Data Found"
+                    />
+                  </div>
                 )}
 
                 <div className={`flex items-center justify-center gap-x-2 `}>
@@ -832,7 +839,7 @@ const Job = () => {
             </div>
           </div>
           <div className="col-span-1">
-            <div className=" w-full  border rounded-3xl focus-within:shadow-lg bg-[#fff] overflow-hidden py-6 px-6">
+            <div className=" w-full  border rounded-3xl  bg-[#fff] overflow-hidden py-6 px-6">
               <p className="text-lg  mb-6 font-semibold text-secondary">
                 About The Client
               </p>
