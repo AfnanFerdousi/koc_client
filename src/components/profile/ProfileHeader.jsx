@@ -62,32 +62,64 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               htmlFor="pfpUpload"
               className="relative rounded-full w-[112px] h-[112px] border hover:cursor-pointer overflow-hidden"
             >
-              <Image
-                src={userProfile?.user?.profile_picture}
-                width={112}
-                height={112}
-                alt="profile picture"
-                className="object-cover rounded-full"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60 transition-opacity opacity-0 hover:opacity-100">
-                <MdEdit className="text-white text-lg" />
-              </div>
-              <input
-                type="file"
-                id="pfpUpload"
-                name="pfpUpload"
-                accept="image/*"
-                onChange={handleDPChange}
-                className="hidden"
-                required
-              />
+              {pfpLoading ? (
+                <div className="flex items-center justify-center  w-full h-full">
+                  <div className="loader"></div>
+                </div>
+              ) : (
+                <>
+                  {" "}
+                  <Image
+                    src={userProfile?.user?.profile_picture}
+                    width={112}
+                    height={112}
+                    alt="profile picture"
+                    className="object-cover rounded-full"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60 transition-opacity opacity-0 hover:opacity-100">
+                    <MdEdit className="text-white text-lg" />
+                  </div>
+                  <input
+                    type="file"
+                    id="pfpUpload"
+                    name="pfpUpload"
+                    accept="image/*"
+                    onChange={handleDPChange}
+                    className="hidden"
+                    required
+                  />
+                </>
+              )}
             </label>
           ) : (
             // Display placeholder initials if no profile picture
-            <div className="bg-primary w-[112px] h-[112px] flex items-center justify-center rounded-full text-white text-3xl">
-              {(userProfile?.user?.first_name?.slice(0, 1) ?? "") +
-                (userProfile?.user?.lastName?.slice(0, 1) ?? "")}
-            </div>
+            <label
+              className="bg-primary w-[112px] h-[112px] flex items-center justify-center rounded-full text-white text-3xl relative overflow-hidden"
+              htmlFor="pfpUpload"
+            >
+              {pfpLoading ? (
+                <div className="flex items-center justify-center  w-full h-full">
+                  <div className="loader"></div>
+                </div>
+              ) : (
+                <>
+                  {(userProfile?.user?.first_name?.slice(0, 1) ?? "") +
+                    (userProfile?.user?.lastName?.slice(0, 1) ?? "")}
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60 transition-opacity opacity-0 hover:opacity-100">
+                    <MdEdit className="text-white text-lg" />
+                  </div>
+                  <input
+                    type="file"
+                    id="pfpUpload"
+                    name="pfpUpload"
+                    accept="image/*"
+                    onChange={handleDPChange}
+                    className="hidden"
+                    required
+                  />
+                </>
+              )}
+            </label>
           )
         ) : userProfile?.user?.profile_picture ? (
           // Display profile picture for other users
@@ -193,7 +225,11 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               className="rounded-3xl w-full lg:py-3 lg:px-5 px-3 py-2 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
               onClick={(e) => {
                 e.stopPropagation();
-                setShowHireNowModal(userProfile?.user?._id);
+                if (userProfile) {
+                  setShowHireNowModal(item?.user?._id);
+                } else {
+                  router.push("/auth/login");
+                }
               }}
             >
               Hire now
@@ -201,6 +237,16 @@ const ProfileHeader = ({ userProfile, isMine }) => {
           </div>
         )}
       </div>
+      <AnimatePresence initial={false} onExitComplete={() => null}>
+        {showHireNowModal && (
+          <JobsModal
+            setShowJobsModal={setShowHireNowModal}
+            showJobsModal={showHireNowModal}
+            userProfile={userProfile}
+            isHireNow={true}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

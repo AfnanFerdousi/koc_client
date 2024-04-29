@@ -87,7 +87,7 @@ const Jobs = () => {
             country: selectedCountry === "" ? "" : selectedCountry.value,
           })
         );
-      } else if (activeJobs === "bestMatches") {
+      } else {
         await dispatch(
           getJobs({
             user_id: userProfile?.user?._id,
@@ -99,17 +99,14 @@ const Jobs = () => {
             country: selectedCountry === "" ? "" : selectedCountry.value,
           })
         );
-      } else if (activeJobs === "bookmarks") {
         await dispatch(getBookmarks(userProfile?.user?._id));
-      } else if (activeJobs === "myJobs") {
         await dispatch(getMyJobs(userProfile?.user?._id));
       }
-
       dispatch(setLoading(false));
     };
     fetchData();
   }, [
-    activeJobs,
+    // activeJobs,
     dispatch,
     maxBudget,
     minBudget,
@@ -578,7 +575,7 @@ const Jobs = () => {
             >
               {searchTerm === "" &&
                 activeJobs === "myJobs" &&
-                bestMatches?.length > displayedMyJobs && (
+                myJobs?.length > displayedMyJobs && (
                   <div className="flex items-center justify-center my-4">
                     <button
                       className="rounded-3xl px-3 py-1 border-primary border text-primary text-center active:scale-95"

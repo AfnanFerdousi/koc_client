@@ -7,30 +7,9 @@ import Description from "../ui/Description";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-export const PopularCategory = () => {
-  const dispatch = useDispatch();
+export const PopularCategory = ({ categories, categoryLoading }) => {
   const router = useRouter();
-  // Local state to store jobs and loading
-  const [categories, setCategories] = useState([]);
-  const [categoryLoading, setCategoryLoading] = useState(false);
 
-  // Dispatch the getCategories action on component mount
-  useEffect(() => {
-    // Update local loading state to true when fetching categories
-    setCategoryLoading(true);
-    dispatch(getPopularCategories())
-      .then((response) => {
-        // Update local jobs state with fetched data
-        setCategories(response.payload?.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      })
-      .finally(() => {
-        // Update local loading state to false after fetching completes
-        setCategoryLoading(false);
-      });
-  }, [dispatch]);
   return (
     <div className="card1">
       <Stack>
@@ -106,7 +85,7 @@ export const PopularCategory = () => {
             className=" rounded-3xl  lg:py-4 lg:px-8 px-4 py-2  bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95 "
             href="/categories"
           >
-            See all
+            See all Categories
           </Link>
         </div>
       </Container>

@@ -117,9 +117,6 @@ form .ri-search-line {
   padding-top: 25px;
   color: white !important;
 }
-.chip-element {
-  margin-right: 10px;
-}
 
 .card-fadeIn {
   opacity: 0;
@@ -762,7 +759,7 @@ input:-webkit-autofill:active {
   padding: 20px 0;
 }
 .register-wrap {
-  width: 440px;
+  width: 600px;
   max-width: 100%;
   min-height: 680px;
   background-color: #2b2e38;

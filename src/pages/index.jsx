@@ -8,18 +8,45 @@ import { TopContent } from "@/components/home/topContext";
 import Mainlayout from "@/components/layouts/Mainlayout";
 import { Stack } from "@mui/material";
 import Head from "next/head";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getPopularCategories } from "../axios/axios";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  // Local state to store jobs and loading
+  const [categories, setCategories] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+
+  // Dispatch the getCategories action on component mount
+  useEffect(() => {
+    // Update local loading state to true when fetching categories
+    setCategoryLoading(true);
+    dispatch(getPopularCategories())
+      .then((response) => {
+        // Update local jobs state with fetched data
+        setCategories(response.payload?.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+      })
+      .finally(() => {
+        // Update local loading state to false after fetching completes
+        setCategoryLoading(false);
+      });
+  }, [dispatch]);
   return (
     <div>
       <Head>
         <title>KocFreelancing | Home</title>
       </Head>
       <Stack>
-        <TopContent />
+        <TopContent categories={categories} categoryLoading={categoryLoading} />
         <AdvertContent />
-        <PopularCategory />
+        <PopularCategory
+          categories={categories}
+          categoryLoading={categoryLoading}
+        />
         <Projects />
         <Steps />
         <Benefit />

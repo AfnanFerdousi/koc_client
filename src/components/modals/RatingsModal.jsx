@@ -108,7 +108,7 @@ const RatingsModal = ({
             <p className="text-3xl font-semibold">Give feedback</p>
             <RxCross1
               className="text-2xl cursor-pointer"
-              onClick={() => setShowRatingsModal(!isEdit ? false : null)}
+              onClick={() => setShowRatingsModal(null)}
             />
           </div>
           <div className="flex flex-col space-y-2 my-4">

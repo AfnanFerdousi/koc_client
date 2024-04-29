@@ -58,8 +58,13 @@ const LoginPage = () => {
         <Stack direction="row" justifyContent="center">
           {state === "verified" ? (
             <div className="reset-wrap">
-              <Stack direction="row" justifyContent="start" alignItems="center">
-                <h4 className="auth-title">You email is now verified</h4>
+              <Stack
+                direction="row"
+                justifyContent="start"
+                alignItems="center"
+                marginBottom={2}
+              >
+                <h4 className="text-xl">You're now verified!</h4>
               </Stack>
               <Stack
                 direction="column"

@@ -260,7 +260,11 @@ const Category = () => {
                           className="rounded-3xl w-full lg:py-3 lg:px-4 px-3 py-2 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setShowHireNowModal(item?.user?._id);
+                            if (userProfile) {
+                              setShowHireNowModal(item?.user?._id);
+                            } else {
+                              router.push("/auth/login");
+                            }
                           }}
                         >
                           Hire now

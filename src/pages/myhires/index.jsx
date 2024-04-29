@@ -133,7 +133,9 @@ const MyFreelancers = () => {
               onChange={(event) => setSearchTerm(event.target.value)}
             />
           </div>
-          <p className="my-8 font-medium  text-2xl">Hired freelancers</p>
+          <p className="my-8 font-medium  text-2xl">
+            My Hires ({data?.length ?? 0})
+          </p>
 
           <div className="border rounded-3xl max-w-screen-xl  justify-center    mb-14 mx-auto">
             {loading ? (

@@ -79,7 +79,7 @@ const LoginPage = () => {
         <Stack direction="row" justifyContent="center">
           {state === "reset" && (
             <div className="center-wrap">
-              <h4 className="auth-title">Reset Your Password</h4>
+              <h4 className="auth-title mb-4">Reset Your Password</h4>
               <Stack direction="row" justifyContent="center">
                 <Stack sx={{ width: "80%" }}>
                   <PasswordField

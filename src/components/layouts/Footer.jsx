@@ -202,7 +202,7 @@ const Footer = () => {
             </div>
 
             <LinkGroup header="Resources">
-              <NavLink link="/#" label="SaaS Development" />
+              <NavLink link="/terms" label="Term & Conditions" />
               <NavLink link="/#" label="Our Products" />
               <NavLink link="/#" label="User Flow" />
               <NavLink link="/#" label="User Strategy" />
@@ -367,12 +367,12 @@ const LinkGroup = ({ children, header }) => {
 const NavLink = ({ link, label }) => {
   return (
     <li>
-      <a
+      <Link
         href={link}
         className="inline-block text-base leading-loose text-gray-200 hover:text-primary -dark-6"
       >
         {label}
-      </a>
+      </Link>
     </li>
   );
 };

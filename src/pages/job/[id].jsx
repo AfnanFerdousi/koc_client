@@ -41,6 +41,9 @@ import ProposalModal from "../../components/modals/ProposalModal";
 import JobsModal from "../../components/modals/JobsModal";
 import Link from "next/link";
 import ProtectedRoute from "../../components/layouts/ProtectedRoute";
+import ConfirmationModal from "../../components/modals/ConfirmationModal";
+import { RxCross1 } from "react-icons/rx";
+import Modal from "../../components/ui/Modal";
 
 const Job = () => {
   // Next.js router
@@ -53,6 +56,7 @@ const Job = () => {
   const isLoading = useSelector((state) => state.loading.loading);
   const [date, setDate] = useState(null);
   const [sort, setSort] = useState("Newest");
+  const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       dispatch(setLoading(true));
@@ -149,7 +153,7 @@ const Job = () => {
   const [showEditProposalModal, setShowEditProposalModal] = useState(null);
 
   const handleAcceptProposal = (proposalId) => {
-    dispatch(dispatch(setLoading(true)));
+    dispatch(setLoading(true));
     dispatch(
       acceptProposal({
         dynamicParams: { proposalId: proposalId, jobId: id },
@@ -158,17 +162,16 @@ const Job = () => {
     )
       .then(() => {
         // After adding Proposal, fetch the updated profile data
-        return dispatch(
-          getJobById({ userId: userProfile?.user?._id, jobId: id })
-        );
+        dispatch(getJobById({ userId: userProfile?.user?._id, jobId: id }));
+        router.push("/myhires");
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-    dispatch(dispatch(setLoading(false)));
+    dispatch(setLoading(false));
   };
   const handleDeleteProposal = () => {
-    dispatch(dispatch(setLoading(true)));
+    dispatch(setLoading(true));
     dispatch(
       deleteProposal({
         dynamicParams: { proposalId: showDeleteProposalModal },
@@ -188,7 +191,7 @@ const Job = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-    dispatch(dispatch(setLoading(false)));
+    dispatch(setLoading(false));
   };
   const [proposalData, setProposalData] = useState({
     bid_amount: 0,
@@ -245,7 +248,11 @@ const Job = () => {
             <div className="loader"></div>
           </div>{" "}
           <div className="col-span-1">
-            <div className=" w-full border rounded-3xl h-[30vh]  bg-[#fff] overflow-hidden py-3 px-6"></div>
+            <div className=" w-full border rounded-3xl h-[30vh]  bg-[#fff] overflow-hidden py-3 px-6">
+              <p className="text-lg  my-6 font-semibold text-secondary">
+                About The Client
+              </p>
+            </div>
           </div>
         </div>
       ) : (
@@ -787,15 +794,24 @@ const Job = () => {
                           </p>
                           {jobData?.user === userProfile?.user?._id &&
                             jobData?.status === "open" && (
-                              <div className="flex items-center justify-end">
+                              <div className="flex items-center justify-end gap-x-2">
+                                <button
+                                  className="rounded px-6 py-2 border-primary border text-primary bg-white text-center active:scale-95 transition-all hover:bg-opacity-90"
+                                  disabled
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Initiate Chat
+                                </button>
                                 <button
                                   className="rounded px-6 py-2 border-primary border text-white bg-primary text-center active:scale-95 transition-all hover:bg-opacity-90"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleAcceptProposal(item?._id);
+                                    setShowConfirmationModal(item?._id);
                                   }}
                                 >
-                                  Accept
+                                  Accept Proposal
                                 </button>
                               </div>
                             )}
@@ -971,6 +987,14 @@ const Job = () => {
             loading={isLoading}
             onClose={() => setShowDeleteProposalModal(null)}
             onConfirm={() => handleDeleteProposal()}
+          />
+        )}
+        {showConfirmationModal && (
+          <ConfirmationModal
+            title="accept the proposal and continue"
+            loading={isLoading}
+            onClose={() => setShowConfirmationModal(null)}
+            onConfirm={() => handleAcceptProposal(showConfirmationModal)}
           />
         )}
       </AnimatePresence>

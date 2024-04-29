@@ -163,8 +163,8 @@ const MainContent = ({ userProfile, isMine }) => {
             .slice(0, displayedRemainingClientReviews)
             .map((item, index) => (
               <div
-                className={`p-3 cursor-pointer transition-all group hover:bg-gray-100 ${
-                  userProfile.freelancer_reviews.length - 1 === index
+                className={`p-3  cursor-pointer transition-all group hover:bg-gray-100 ${
+                  userProfile.client_reviews.length - 1 === index
                     ? ""
                     : "border-b"
                 }`}
@@ -195,7 +195,17 @@ const MainContent = ({ userProfile, isMine }) => {
 
                   <p>|</p>
                   <p className="text-md  text-secondary">
-                    <span className="font-medium">{item?.duration}</span>
+                    <span className="font-medium">
+                      {" "}
+                      {item?.offer?.createdAt &&
+                        (({ timestamp }) => (
+                          <span>
+                            {formatDistance(new Date(timestamp), new Date(), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                        ))({ timestamp: item?.offer?.createdAt ?? 0 })}
+                    </span>
                   </p>
                 </div>
                 <p className="text-secondary flex items-center gap-x-2">
@@ -256,14 +266,14 @@ const MainContent = ({ userProfile, isMine }) => {
                   <p className="text-md  text-secondary">
                     <span className="font-medium">
                       {" "}
-                      {item?.createdAt &&
+                      {item?.offer?.createdAt &&
                         (({ timestamp }) => (
                           <span>
                             {formatDistance(new Date(timestamp), new Date(), {
                               addSuffix: true,
                             })}
                           </span>
-                        ))({ timestamp: item?.createdAt ?? 0 })}
+                        ))({ timestamp: item?.offer?.createdAt ?? 0 })}
                     </span>
                   </p>
                 </div>

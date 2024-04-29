@@ -213,74 +213,76 @@ const ProjectCard = ({
         description={job_description}
         className="py-3 text-green-900"
       />
-      <div className="flex justify-start gap-x-6 items-center">
-        {profile?.payment_verified ? (
-          profile?.payment_verified
-        ) : user?.profile?.payment_verified ? (
-          <div className="flex items-center gap-x-1 text-secondary">
-            <RiVerifiedBadgeFill /> Payment Verified{" "}
-          </div>
-        ) : (
-          <div className="flex items-center gap-x-1 text-secondary">
-            <VscUnverified /> Payment Unverified{" "}
-          </div>
-        )}
+      {!myJob && (
+        <div className="flex justify-start gap-x-6 items-center">
+          {profile?.payment_verified ? (
+            profile?.payment_verified
+          ) : user?.profile?.payment_verified ? (
+            <div className="flex items-center gap-x-1 text-secondary">
+              <RiVerifiedBadgeFill /> Payment Verified{" "}
+            </div>
+          ) : (
+            <div className="flex items-center gap-x-1 text-secondary">
+              <VscUnverified /> Payment Unverified{" "}
+            </div>
+          )}
 
-        <div className=" text-secondary flex items-center gap-x-2 font-medium">
-          <Rating
-            style={{ maxWidth: 100 }}
-            value={
-              profile?.client_rating
-                ? profile?.client_rating
-                : user?.profile?.client_rating ?? 0
-            }
-            readOnly
-            itemStyles={{
-              itemShapes: StickerStar,
-              activeFillColor: "#35B900",
-              inactiveFillColor: "#cecece",
-            }}
-          />
+          <div className=" text-secondary flex items-center gap-x-2 font-medium">
+            <Rating
+              style={{ maxWidth: 100 }}
+              value={
+                profile?.client_rating
+                  ? profile?.client_rating
+                  : user?.profile?.client_rating ?? 0
+              }
+              readOnly
+              itemStyles={{
+                itemShapes: StickerStar,
+                activeFillColor: "#35B900",
+                inactiveFillColor: "#cecece",
+              }}
+            />
 
-          <p className="font-medium  text-secondary">
-            {" "}
-            {profile?.client_overall_reviews
-              ? profile?.client_overall_reviews?.toFixed(2)
-              : user?.profile?.client_overall_reviews?.toFixed(2)}
+            <p className="font-medium  text-secondary">
+              {" "}
+              {profile?.client_overall_reviews
+                ? profile?.client_overall_reviews?.toFixed(2)
+                : user?.profile?.client_overall_reviews?.toFixed(2)}
+            </p>
+            <p>
+              (
+              {profile?.client_reviews?.length
+                ? profile?.client_reviews?.length
+                : user?.profile?.client_reviews?.length ?? 0}{" "}
+              reviews)
+            </p>
+          </div>
+          <p className="text-md  text-secondary">
+            <span className="font-medium">
+              $
+              {profile?.amount_earned
+                ? profile?.amount_earned
+                : user?.profile?.amount_earned ?? 0}
+            </span>{" "}
+            spent
           </p>
-          <p>
-            (
-            {profile?.client_reviews?.length
-              ? profile?.client_reviews?.length
-              : user?.profile?.client_reviews?.length ?? 0}{" "}
-            reviews)
+          <p className="text-md  text-secondary">
+            <span className="font-medium">
+              {profile?.total_hired
+                ? profile?.total_hired
+                : user?.profile?.total_hired ?? 0}
+            </span>{" "}
+            hired
+          </p>
+          <p className="flex items-center">
+            <MdOutlineLocationOn className="text-md mr-1 font-medium text-secondary" />
+            <span className="text-md text-secondary ">
+              {profile?.city ? profile?.city : user?.profile?.city},{" "}
+              {profile?.country ? profile?.country : user?.profile?.country}
+            </span>
           </p>
         </div>
-        <p className="text-md  text-secondary">
-          <span className="font-medium">
-            $
-            {profile?.amount_earned
-              ? profile?.amount_earned
-              : user?.profile?.amount_earned ?? 0}
-          </span>{" "}
-          spent
-        </p>
-        <p className="text-md  text-secondary">
-          <span className="font-medium">
-            {profile?.total_hired
-              ? profile?.total_hired
-              : user?.profile?.total_hired ?? 0}
-          </span>{" "}
-          hired
-        </p>
-        <p className="flex items-center">
-          <MdOutlineLocationOn className="text-md mr-1 font-medium text-secondary" />
-          <span className="text-md text-secondary ">
-            {profile?.city ? profile?.city : user?.profile?.city},{" "}
-            {profile?.country ? profile?.country : user?.profile?.country}
-          </span>
-        </p>
-      </div>
+      )}
       <div className="flex flex-wrap gap-x-2  gap-y-2 my-3">
         {skills?.map((element, idx) => (
           <div key={`skillset-${idx}`}>

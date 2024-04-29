@@ -146,7 +146,7 @@ const LoginPage = () => {
           {state === "login" ? (
             <div className="center-wrap">
               <div
-                className="flex items-center justify-center text-gray-300 cursor-pointer mx-auto gap-x-1"
+                className="flex items-center justify-center text-gray-300 cursor-pointer mx-auto gap-x-1 my-4"
                 onClick={() => router.push(`/`)}
               >
                 <MdHome className="text-xl " />
@@ -246,14 +246,20 @@ const LoginPage = () => {
           {/* Closing brace for first ternary condition */}
           {state === "reset" ? (
             <div className="reset-wrap">
-              <Stack direction="row" justifyContent="start" alignItems="center">
+              <Stack
+                direction="row"
+                display="flex"
+                justifyContent="start"
+                alignItems="center"
+                mb={4}
+              >
                 <IconButton
                   onClick={() => handleClick("login")}
                   sx={{ marginLeft: "20px" }}
                 >
                   <ArrowBackIosNewIcon sx={{ color: "grey" }} />
                 </IconButton>
-                <h4 className="auth-title">Şifrenizi sıfırlayın</h4>
+                <h4 className="text-xl ">Şifrenizi sıfırlayın</h4>
               </Stack>
               <Stack direction="row" justifyContent="center">
                 <Stack sx={{ width: "80%" }}>

@@ -24,6 +24,7 @@ import { editInfo } from "../../axios/axios";
 const SignupPage = () => {
   // State variables
   const [state, setState] = useState("signup");
+
   const [showResendButton, setShowResendButton] = useState(true);
   const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState({
@@ -41,6 +42,7 @@ const SignupPage = () => {
   const [characterCount, setCharacterCount] = useState(0);
   const [userId, setUserId] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
   const [disableResendButton, setDisableResendButton] = useState(false);
 
   const router = useRouter();
@@ -224,7 +226,7 @@ const SignupPage = () => {
           {state === "signup" && (
             <div className="register-wrap rounded-none md:rounded-[10px]">
               <div
-                className="flex items-center justify-center text-gray-300 cursor-pointer mx-auto gap-x-1"
+                className="flex items-center justify-center text-gray-300 cursor-pointer mx-auto gap-x-1 my-4"
                 onClick={() => router.push(`/`)}
               >
                 <MdHome className="text-xl " />
@@ -469,6 +471,49 @@ const SignupPage = () => {
                         Password must be atleast 6 characters
                       </span>
                     )}
+                    <div className="flex items-center">
+                      <div className="inline-flex items-center">
+                        <label
+                          className="relative flex cursor-pointer items-center rounded-full p-2"
+                          htmlFor="checkbox-1"
+                          data-ripple-dark="true"
+                        >
+                          <input
+                            type="checkbox"
+                            id="checkbox-1"
+                            className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border  transition-all before:absolute checked:border-[#1f2029] checked:bg-[#1f2029]"
+                            checked={isChecked}
+                            onChange={(e) => setIsChecked(!isChecked)}
+                          />
+                          <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-3.5 w-3.5"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              stroke="currentColor"
+                              strokeWidth={1}
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        </label>
+                      </div>
+                      <p className="text-base">
+                        I agree to the{" "}
+                        <Link
+                          className="underline font-medium cursor-pointer hover:no-underline"
+                          href="/terms"
+                        >
+                          terms and conditions
+                        </Link>
+                        .
+                      </p>
+                    </div>
                   </Stack>
                 </Stack>
                 <Stack direction="row" justifyContent="center">
@@ -477,7 +522,7 @@ const SignupPage = () => {
                       <div className="loaderAuth mx-auto"></div>{" "}
                     </div>
                   ) : (
-                    <button type="submit" className="btn">
+                    <button type="submit" className="btn" disabled={!isChecked}>
                       Kayıt Ol
                     </button>
                   )}
@@ -495,7 +540,7 @@ const SignupPage = () => {
           )}
           {state === "info" ? (
             <form
-              className="reset-wrap"
+              className="register-wrap"
               onSubmit={handleSubmit(handleInfoUpdate)}
             >
               <Stack
@@ -504,16 +549,10 @@ const SignupPage = () => {
                 alignItems="center"
                 marginBottom={2}
               >
-                <IconButton
-                  onClick={() => setState("signup")}
-                  sx={{ marginLeft: "20px" }}
-                >
-                  <ArrowBackIosNewIcon sx={{ color: "grey" }} />
-                </IconButton>
-                <h4 className="text-xl ">Tell us about yourself</h4>
+                <h4 className="text-xl ml-8">Tell us about yourself</h4>
               </Stack>
-              <Stack direction="row" justifyContent="center">
-                <Stack sx={{ width: "80%" }}>
+              <Stack direction="row" justifyContent="center" paddingX="45px">
+                <Stack sx={{ width: "100%" }}>
                   <div className="p-1">
                     <label
                       htmlFor="Title"

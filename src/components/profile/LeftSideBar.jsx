@@ -206,8 +206,8 @@ const ProfileHeader = ({ userProfile, isMine }) => {
           <p className="text-2xl font-semibold mb-2">Verifications</p>
           {[
             { label: "Email", verified: userProfile?.user?.is_verified },
-            { label: "Phone", verified: userProfile?.phone_verified },
-            { label: "Payment", verified: userProfile?.payment_verified },
+            // { label: "Phone", verified: userProfile?.phone_verified },
+            // { label: "Payment", verified: userProfile?.payment_verified },
           ].map((verification, index) => (
             <p key={index} className="font-medium mb-2 flex items-center ">
               {verification.label}:{" "}

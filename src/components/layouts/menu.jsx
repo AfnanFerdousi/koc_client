@@ -16,10 +16,11 @@ import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import Image from "next/image";
-import { getNotifications } from "../../axios/axios";
+import { getNotifications, patchReadNotifications } from "../../axios/axios";
 import { setLoading } from "../../redux/reducers/loadingSlice";
 import { formatDistance } from "date-fns";
 import { Badge } from "@mui/material";
+import { MdAccountCircle, MdRefresh } from "react-icons/md";
 
 const AccountMenu = () => {
   const router = useRouter();
@@ -36,10 +37,12 @@ const AccountMenu = () => {
 
     setOpen(false);
   };
+
   const [open1, setOpen1] = React.useState(false);
   const anchorRef1 = React.useRef(null);
   const handleToggle1 = () => {
     setOpen1((prevOpen1) => !prevOpen1);
+    handleRefresh();
   };
 
   const handleClose1 = (event) => {
@@ -49,10 +52,12 @@ const AccountMenu = () => {
 
     setOpen1(false);
   };
+
   const handleProfile = (e) => {
     router.push(`/profile/me`, { scroll: false });
     handleClose(e);
   };
+
   const handleLogout = (event) => {
     handleClose(event);
     localStorage.removeItem("accessToken");
@@ -68,6 +73,7 @@ const AccountMenu = () => {
       setOpen(false);
     }
   }
+
   function handleListKeyDown1(event) {
     if (event.key === "Tab") {
       event.preventDefault();
@@ -88,7 +94,7 @@ const AccountMenu = () => {
 
     prevOpen.current = open;
   }, [open]);
-  const userProfile = useSelector((state) => state.user?.data);
+
   // return focus to the button when we transitioned from !open -> open
   const prevOpen1 = React.useRef(open);
   React.useEffect(() => {
@@ -101,26 +107,31 @@ const AccountMenu = () => {
     prevOpen1.current = open;
   }, [open]);
 
+  const userProfile = useSelector((state) => state.user?.data);
+
   const [notifications, setNotifications] = React.useState([]);
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.loading);
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      dispatch(setLoading(true));
-      try {
-        // Fetch Skills data
-        const response = await dispatch(
-          getNotifications(userProfile?.user?._id)
-        );
-
-        setNotifications(response?.payload?.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+  const fetchData = async () => {
+    dispatch(setLoading(true));
+    try {
+      const response = await dispatch(getNotifications(userProfile?.user?._id));
+      setNotifications(response?.payload?.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
       dispatch(setLoading(false));
-    };
+    }
+  };
 
+  const handleRefresh = async () => {
+    await fetchData();
+    // Mark notifications as read after refreshing
+    dispatch(patchReadNotifications(userProfile?.user?._id));
+  };
+
+  React.useEffect(() => {
     fetchData();
   }, [dispatch, userProfile?.user?._id, router]);
 
@@ -135,7 +146,10 @@ const AccountMenu = () => {
           aria-haspopup="true"
           onClick={handleToggle1}
         >
-          <Badge badgeContent={notifications?.length ?? 0} color="success">
+          <Badge
+            badgeContent={notifications?.filter((item) => !item.read).length}
+            color="success"
+          >
             <CircleNotificationsIcon
               sx={{
                 width: 32,
@@ -178,49 +192,58 @@ const AccountMenu = () => {
                         >
                           Notifications
                         </p>
+                        <MdRefresh
+                          className="w-6 h-6 cursor-pointer"
+                          onClick={handleRefresh}
+                        />
                       </div>
-
-                      {notifications?.map((item, index) => (
-                        <div
-                          className={`bg-gray-50 w-full hover:bg-gray-100 hover:rounded-lg cursor-pointer p-2  flex items-start gap-x-2 ${
-                            !notifications?.length - 1 === index && "border-b"
-                          }`}
-                          key={index}
-                          onClick={() => item.url && router.push(item.url)}
-                        >
-                          <Avatar
-                            sx={{
-                              width: 40,
-                              height: 40,
-                              backgroundColor: "#35B900",
-                              color: "white",
-                              fontSize: 16,
-                              borderRadius: 8,
-                              marginTop: 0.5,
-                            }}
-                            src={item?.img}
+                      {!loading ? (
+                        notifications?.map((item, index) => (
+                          <div
+                            className={`bg-gray-50 w-full hover:bg-gray-100 hover:rounded-lg cursor-pointer p-2  flex items-start gap-x-2 ${
+                              !notifications?.length - 1 === index && "border-b"
+                            }`}
+                            key={index}
+                            onClick={() => item.url && router.push(item.url)}
                           >
-                            KOC
-                          </Avatar>
-                          <div>
-                            <p className="">{item?.text}</p>
-                            <p className="text-sm mt-1 leading-normal font-medium text-secondary">
-                              {item?.createdAt &&
-                                (({ timestamp }) => (
-                                  <span>
-                                    {formatDistance(
-                                      new Date(timestamp),
-                                      new Date(),
-                                      {
-                                        addSuffix: true,
-                                      }
-                                    )}
-                                  </span>
-                                ))({ timestamp: item?.createdAt ?? 0 })}
-                            </p>
+                            <Avatar
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                backgroundColor: "#35B900",
+                                color: "white",
+                                fontSize: 16,
+                                borderRadius: 8,
+                                marginTop: 0.5,
+                              }}
+                              src={item?.img}
+                            >
+                              KOC
+                            </Avatar>
+                            <div>
+                              <p className="">{item?.text}</p>
+                              <p className="text-sm mt-1 leading-normal font-medium text-secondary">
+                                {item?.createdAt &&
+                                  (({ timestamp }) => (
+                                    <span>
+                                      {formatDistance(
+                                        new Date(timestamp),
+                                        new Date(),
+                                        {
+                                          addSuffix: true,
+                                        }
+                                      )}
+                                    </span>
+                                  ))({ timestamp: item?.createdAt ?? 0 })}
+                              </p>
+                            </div>
                           </div>
+                        ))
+                      ) : (
+                        <div className="flex items-center col-span-1 lg:col-span-3 justify-center h-[30vh] mx-auto">
+                          <div className="loader"></div>
                         </div>
-                      ))}
+                      )}
                       <div className="flex items-center justify-between">
                         <hr className="w-full" />
                         <p
@@ -298,7 +321,7 @@ const AccountMenu = () => {
                     id="composition-menu"
                     aria-labelledby="composition-button"
                     onKeyDown={handleListKeyDown}
-                    className="w-60  bg-white rounded-3xl"
+                    className="w-60  bg-gray-50 rounded-3xl"
                   >
                     <MenuItem
                       onClick={(e) => handleProfile(e)}
@@ -332,6 +355,12 @@ const AccountMenu = () => {
                           " " +
                           userProfile?.user?.lastName}
                       </p>
+                    </MenuItem>
+                    <MenuItem onClick={() => router.push("/profile/me")}>
+                      <ListItemIcon>
+                        <MdAccountCircle className="w-6 h-6" />
+                      </ListItemIcon>
+                      Profile
                     </MenuItem>
                     <MenuItem onClick={() => router.push("/profile/settings")}>
                       <ListItemIcon>
