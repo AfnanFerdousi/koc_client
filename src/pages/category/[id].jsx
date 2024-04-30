@@ -130,7 +130,7 @@ const Category = () => {
         </div>
 
         {!isLoading && (
-          <p className="my-8 font-medium  text-2xl">
+          <p className="my-8 font-medium text-lg lg:text-2xl">
             Best freelancers of {data?.name} (
             {
               data?.freelancers?.filter(
@@ -253,11 +253,11 @@ const Category = () => {
                         </div>
                       </div>
                       <div className="flex items-center justify-end w-full lg:w-1/2 gap-x-2 pt-0 mt-auto">
-                        <button className="rounded-3xl w-full lg:py-3 lg:px-4 px-3 py-2 bg-white border-primary hover:bg-opacity-90 transition-all border text-primary text-center active:scale-95">
+                        <button className="rounded-3xl w-full py-3 px-4 bg-white border-primary hover:bg-opacity-90 transition-all border text-primary text-center active:scale-95">
                           View profile
                         </button>
                         <button
-                          className="rounded-3xl w-full lg:py-3 lg:px-4 px-3 py-2 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
+                          className="rounded-3xl w-full py-3 px-4 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
                           onClick={(e) => {
                             e.stopPropagation();
                             if (userProfile) {

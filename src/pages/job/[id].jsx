@@ -243,7 +243,7 @@ const Job = () => {
       </Head>
       <Navbar />
       {isLoading ? (
-        <div className=" max-w-screen-xl  my-28 mx-auto grid grid-cols-4 gap-x-6">
+        <div className=" max-w-screen-xl  my-28 mx-2 lg:mx-auto lg:grid grid-cols-4 gap-x-6">
           <div className="border rounded-3xl max-w-screen-xl p-6  mb-14 mx-auto col-span-3 w-full flex items-center justify-center h-[120vh]">
             <div className="loader"></div>
           </div>{" "}
@@ -256,7 +256,7 @@ const Job = () => {
           </div>
         </div>
       ) : (
-        <div className=" max-w-screen-xl  my-28 mx-auto grid grid-cols-4 gap-x-6">
+        <div className=" max-w-screen-xl  my-28 mx-2 lg:mx-auto lg:grid grid-cols-4 gap-x-6">
           <div className="border rounded-3xl max-w-screen-xl  justify-center  p-6  mb-14 mx-auto col-span-3 w-full">
             <div className="flex items-center gap-x-2">
               <SlArrowLeftCircle
@@ -276,9 +276,9 @@ const Job = () => {
               </p>
             </div>
             {jobData?.user !== userProfile?.user?._id ? (
-              <div className="flex items-center my-2">
+              <div className="lg:flex space-y-2 lg:space-y-0 items-center my-2">
                 <p className=" font-medium text-2xl">{jobData?.title}</p>{" "}
-                <button className="rounded-3xl ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
+                <button className="rounded-3xl lg:ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
                   {jobData?.status}
                 </button>
                 <button className="rounded-3xl ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
@@ -286,11 +286,11 @@ const Job = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex  my-2 justify-between items-start">
+              <div className="lg:flex space-y-2 lg:space-y-0 items-center my-2 justify-between">
                 {" "}
                 <div className="flex items-start">
                   <p className=" font-medium text-2xl">{jobData?.title}</p>{" "}
-                  <button className="rounded-3xl ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
+                  <button className="rounded-3xl lg:ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
                     {jobData?.status}
                   </button>
                   <button className="rounded-3xl mx-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 text-nowrap">
@@ -321,17 +321,17 @@ const Job = () => {
             )}
             <p className="py-3 text-green-900">{jobData?.job_description}</p>
             <div className="flex justify-between items-center"></div>
-            <div className="flex items-center  ">
-              <p className=" py-3 text-secondary ">
+            <div className="lg:flex items-center  ">
+              <p className=" lg:py-3 text-secondary ">
                 Est. budget :{" "}
                 <span className="font-medium">${jobData?.budget}</span> |
               </p>
 
-              <p className=" py-3 text-secondary ml-1">
+              <p className=" lg:py-3 text-secondary lg:ml-1">
                 Est. duration :{" "}
                 <span className="font-medium">{jobData?.deadline} days</span> |
               </p>
-              <p className=" py-3 text-secondary ml-1">
+              <p className=" lg:py-3 text-secondary lg:ml-1">
                 Project size :{" "}
                 <span className="font-medium">{jobData?.project_size} </span>
               </p>
@@ -434,7 +434,7 @@ const Job = () => {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center justify-between gap-x-3 mt-4">
+                      <div className="lg:flex-row flex-col-reverse gap-y-2 lg:gap-y-0 flex items-center justify-between gap-x-3 mt-4">
                         {jobData?.hasBeenBookmarked ? (
                           <div
                             className="cursor-pointer rounded-3xl  w-full py-3 border border-primary hover:bg-opacity-90 transition-all  text-primary text-center active:scale-95"
@@ -469,25 +469,25 @@ const Job = () => {
               </form>
             )}
             <div>
-              <div className="flex justify-between mt-4 py-4 border-t">
-                <p className="text-2xl font-medium mb-6">
+              <div className="flex justify-between items-center mt-4 py-4 mb-6 border-t">
+                <p className="text-xl lg:text-2xl  font-medium ">
                   All Proposals ({jobData?.proposals?.length})
                 </p>
-                <p>
+                <div className="flex flex-col mx-2">
                   {" "}
-                  <label htmlFor="sort" className="mx-2 font-medium">
+                  <label htmlFor="sort" className=" font-medium">
                     Sort By
                   </label>
                   <select
                     id="sort"
-                    className="cursor-pointer px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-48"
+                    className="cursor-pointer px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary lg:w-48"
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
                   >
                     <option value="Newest">Newest</option>
                     <option value="Oldest">Oldest</option>
                   </select>
-                </p>
+                </div>
               </div>
               <div>
                 {jobData?.proposals?.length > 0 ? (
@@ -505,13 +505,21 @@ const Job = () => {
                             "border-none "
                           }`}
                         >
-                          <div className="flex items-start justify-between mb-2">
+                          <div className="lg:hidden flex justify-end -mb-12 flex-col items-end">
+                            <p className="text-2xl text-secondary  font-semibold mb-[2px]">
+                              ${item?.bid_amount}
+                            </p>
+                            <p className="font-medium text-secondary">
+                              in {item?.delivery_time} days
+                            </p>
+                          </div>
+                          <div className="lg:flex space-y-2 lg:space-y-0 items-start justify-between mb-2">
                             <div
-                              className="flex items-center gap-x-2 cursor-pointer group"
+                              className="lg:flex items-center gap-x-2 cursor-pointer group"
                               onClick={() => router.push(`/profile/me`)}
                             >
                               {item?.created_by?.profile?.user
-                                ?.profile_picture ? (
+                                .profile_picture ? (
                                 <div className="w-[78px] h-[78px] border rounded-full  relative">
                                   <Image
                                     src={
@@ -539,14 +547,20 @@ const Job = () => {
                                 </div>
                               )}
 
-                              <div>
-                                <p className="text-xl text-secondary font-semibold group-hover:text-primary transition-all">
-                                  {item?.created_by?.first_name +
-                                    " " +
-                                    item?.created_by?.lastName}{" "}
-                                </p>
-
+                              <div className="">
                                 <div className="flex items-center gap-x-2">
+                                  <p className="text-xl text-secondary group-hover:text-primary transition-all font-semibold">
+                                    {item?.created_by?.first_name +
+                                      " " +
+                                      item?.created_by?.lastName}{" "}
+                                  </p>
+                                  {item?.accepted && (
+                                    <span className="rounded-3xl px-2 py-1  border-primary border text-primary bg-white text-center active:scale-95 transition-all hover:bg-opacity-90">
+                                      Accepted
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="lg:flex items-center gap-x-2">
                                   <div className=" text-secondary flex items-center gap-x-2 font-medium">
                                     <Rating
                                       style={{ maxWidth: 100 }}
@@ -591,7 +605,7 @@ const Job = () => {
                                 </p>
                               </div>
                             </div>
-                            <div>
+                            <div className="hidden lg:block">
                               <p className="text-2xl text-secondary  font-semibold mb-[2px]">
                                 ${item?.bid_amount}
                               </p>
@@ -628,7 +642,7 @@ const Job = () => {
                                 timestamp: item?.createdAt,
                               })}
                           </p>
-                          <div className="flex items-center justify-end gap-x-2">
+                          <div className="flex items-center my-4 lg:my-0 justify-end gap-x-2">
                             <button
                               className="rounded px-6 py-2 border-red-500 border text-red-500 text-center active:scale-95 transition-all hover:bg-opacity-90"
                               onClick={(e) => {
@@ -669,13 +683,21 @@ const Job = () => {
                             "border-none "
                           }`}
                         >
-                          <div className="flex items-start justify-between mb-2">
+                          <div className="lg:hidden flex justify-end -mb-12 flex-col items-end">
+                            <p className="text-2xl text-secondary  font-semibold mb-[2px]">
+                              ${item?.bid_amount}
+                            </p>
+                            <p className="font-medium text-secondary">
+                              in {item?.delivery_time} days
+                            </p>
+                          </div>
+                          <div className="lg:flex space-y-2 lg:space-y-0 items-start justify-between mb-2">
                             <div
-                              className="flex items-center gap-x-2 cursor-pointer group"
+                              className="lg:flex items-center gap-x-2 cursor-pointer group"
                               onClick={() => router.push(`/profile/me`)}
                             >
                               {item?.created_by?.profile?.user
-                                ?.profile_picture ? (
+                                .profile_picture ? (
                                 <div className="w-[78px] h-[78px] border rounded-full  relative">
                                   <Image
                                     src={
@@ -703,14 +725,20 @@ const Job = () => {
                                 </div>
                               )}
 
-                              <div>
-                                <p className="text-xl text-secondary group-hover:text-primary transition-all font-semibold">
-                                  {item?.created_by?.first_name +
-                                    " " +
-                                    item?.created_by?.lastName}{" "}
-                                </p>
-
+                              <div className="">
                                 <div className="flex items-center gap-x-2">
+                                  <p className="text-xl text-secondary group-hover:text-primary transition-all font-semibold">
+                                    {item?.created_by?.first_name +
+                                      " " +
+                                      item?.created_by?.lastName}{" "}
+                                  </p>
+                                  {item?.accepted && (
+                                    <span className="rounded-3xl px-2 py-1  border-primary border text-primary bg-white text-center active:scale-95 transition-all hover:bg-opacity-90">
+                                      Accepted
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="lg:flex items-center gap-x-2">
                                   <div className=" text-secondary flex items-center gap-x-2 font-medium">
                                     <Rating
                                       style={{ maxWidth: 100 }}
@@ -755,7 +783,7 @@ const Job = () => {
                                 </p>
                               </div>
                             </div>
-                            <div>
+                            <div className="hidden lg:block">
                               <p className="text-2xl text-secondary  font-semibold mb-[2px]">
                                 ${item?.bid_amount}
                               </p>
@@ -794,7 +822,7 @@ const Job = () => {
                           </p>
                           {jobData?.user === userProfile?.user?._id &&
                             jobData?.status === "open" && (
-                              <div className="flex items-center justify-end gap-x-2">
+                              <div className="flex items-center my-4 lg:my-0 justify-end gap-x-2">
                                 <button
                                   className="rounded px-6 py-2 border-primary border text-primary bg-white text-center active:scale-95 transition-all hover:bg-opacity-90"
                                   disabled

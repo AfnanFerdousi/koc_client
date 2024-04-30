@@ -31,7 +31,7 @@ export default function Profile() {
         </div>
       ) : (
         <>
-          <div className="border rounded-3xl max-w-screen-xl mt-28 mx-auto">
+          <div className="border rounded-3xl max-w-screen-xl mt-28 mx-2 lg:mx-auto">
             <ProfileHeader
               isMine={true}
               userProfile={userProfile}

@@ -182,7 +182,7 @@ const AccountMenu = () => {
                     id="composition-menu"
                     aria-labelledby="composition-button"
                     onKeyDown={handleListKeyDown1}
-                    className="w-[380px] shadow bg-gray-50 rounded-3xl"
+                    className="lg:w-[380px] w-[80vw] shadow bg-gray-50 rounded-3xl"
                   >
                     <div className="bg-gray-50  h-[50vh] w-full overflow-y-scroll p-3  absolute right-0">
                       <div className="flex items-center justify-between">

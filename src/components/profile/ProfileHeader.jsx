@@ -53,8 +53,8 @@ const ProfileHeader = ({ userProfile, isMine }) => {
   };
 
   return (
-    <div className="lg:flex justify-between lg:p-6 p-3 border-b">
-      <div className="flex items-center gap-x-8">
+    <div className="lg:flex justify-between lg:p-6 p-3  border-b">
+      <div className="lg:flex-row flex-col flex items-center justify-center lg:gap-x-8">
         {isMine ? (
           userProfile?.user?.profile_picture ? (
             // Display profile picture with edit button
@@ -141,25 +141,27 @@ const ProfileHeader = ({ userProfile, isMine }) => {
         )}
 
         <div>
-          <div className="flex items-center ">
-            <p className="text-4xl font-semibold mr-2">
+          <div className="flex flex-col space-y-2 lg:space-y-0 lg:flex-row items-center ">
+            <p className="text-2xl lg:text-4xl  font-semibold lg:mr-2">
               {(userProfile?.user?.first_name ?? "") +
                 " " +
                 (userProfile?.user?.lastName ?? "")}{" "}
             </p>{" "}
-            {userProfile?.category && (
-              <button className="rounded-3xl px-3 py-1 bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95">
-                {userProfile?.category?.name}
-              </button>
-            )}
-            {isMine && (
-              <div
-                className="rounded-full p-[5px] hover:bg-opacity-80 border-[1px] mx-2 border-primary bg-gray-50 cursor-pointer transition-all"
-                onClick={() => router.push("/profile/settings")}
-              >
-                <MdEdit className="text-primary text-lg" />
-              </div>
-            )}{" "}
+            <div className="flex items-center gap-x-2">
+              {userProfile?.category && (
+                <button className="rounded-3xl px-3 py-1 bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95">
+                  {userProfile?.category?.name}
+                </button>
+              )}
+              {isMine && (
+                <div
+                  className="rounded-full p-[5px] hover:bg-opacity-80 border-[1px]  border-primary bg-gray-50 cursor-pointer transition-all"
+                  onClick={() => router.push("/profile/settings")}
+                >
+                  <MdEdit className="text-primary text-lg" />
+                </div>
+              )}{" "}
+            </div>
           </div>
 
           <p className="flex items-center mt-2">
@@ -191,18 +193,18 @@ const ProfileHeader = ({ userProfile, isMine }) => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row lg:items-center gap-y-2 lg:justify-end">
+      <div className="flex flex-col my-3 lg:mt-0 lg:flex-row lg:items-center gap-y-2 lg:justify-end">
         {isMine ? (
           // Buttons for the current user
           <div className="flex gap-x-4 items-center">
             <button
-              className="rounded-3xl whitespace-nowrap w-full lg:py-3 lg:px-4 px-3 py-2 bg-white border-primary hover:bg-opacity-90 text-secondary transition-all border text-center active:scale-95"
+              className="rounded-3xl whitespace-nowrap w-full  px-4 py-3 bg-white border-primary hover:bg-opacity-90 text-secondary transition-all border text-center active:scale-95"
               onClick={() => router.push(`/profile/${userProfile?.user?._id}`)}
             >
               See Public View
             </button>
             <button
-              className="rounded-3xl w-full lg:py-3 lg:px-4 px-3 py-2 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
+              className="rounded-3xl w-full  px-4 py-3 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
               onClick={() => router.push("/profile/settings")}
             >
               Profile Settings
@@ -212,7 +214,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
           // Button for other users to see their private view
           <div className="flex gap-x-4 items-center">
             <button
-              className="rounded-3xl whitespace-nowrap w-full lg:py-3 lg:px-4 px-3 py-2 bg-white border-primary hover:bg-opacity-90 text-secondary transition-all border text-center active:scale-95"
+              className="rounded-3xl whitespace-nowrap w-full  px-4 py-3 bg-white border-primary hover:bg-opacity-90 text-secondary transition-all border text-center active:scale-95"
               onClick={() => router.push(`/profile/me`)}
             >
               See Private View
@@ -222,7 +224,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
           // Button for other users to hire
           <div className="flex gap-x-4 items-center">
             <button
-              className="rounded-3xl w-full lg:py-3 lg:px-5 px-3 py-2 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
+              className="rounded-3xl w-full  px-5 py-3 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95"
               onClick={(e) => {
                 e.stopPropagation();
                 if (userProfile) {

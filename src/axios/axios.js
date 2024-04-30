@@ -402,7 +402,7 @@ export const acceptProposal = asyncThunkCreator(
 );
 export const acceptJob = asyncThunkCreator(
   "user/acceptProposalData",
-  "/job/accept/{proposalId}/{jobId}",
+  "/offer/acceptInvitation/{jobId}/{userId}",
   "patch",
   "Job Accepted Successfully!"
 );
@@ -578,7 +578,7 @@ export const patchReadNotifications = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await Axios.patch(
-        `${baseURL}/readNotification/${userId}`,
+        `${baseURL}/notification/readNotification/${userId}`,
         config
       );
       return response.data;
@@ -592,7 +592,7 @@ export const getTerms = createAsyncThunk(
   "Clients/fetchSkillsData",
   async (_, thunkAPI) => {
     try {
-      const response = await Axios.get(`${baseURL}/terms/`, config);
+      const response = await Axios.get(`${baseURL}/misc/terms`, config);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

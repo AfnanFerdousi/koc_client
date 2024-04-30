@@ -64,11 +64,11 @@ export default function Profile() {
       </Head>
       <Navbar />
       {isLoading || loading ? (
-        <div className="border rounded-3xl max-w-screen-xl flex items-center justify-center h-[80vh] my-28  mx-auto">
+        <div className="border rounded-3xl max-w-screen-xl flex items-center justify-center h-[80vh] my-28  mx-2 lg:mx-auto">
           <div className="loader"></div>
         </div>
       ) : (
-        <div className="mt-28 mx-auto max-w-screen-xl">
+        <div className="mt-28 mx-2 lg:mx-auto max-w-screen-xl">
           <p className="text-3xl font-medium ">Profile Settings</p>
           <div className="border rounded-3xl w-full my-6 p-6 ">
             <div className="flex items-center justify-between">

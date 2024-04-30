@@ -59,8 +59,7 @@ const RatingsModal = ({
           console.error("Error:", error);
           dispatch(setLoading(false));
         });
-    }
-    {
+    } else {
       dispatch(setLoading(true));
       dispatch(
         markAsCompleted({
@@ -101,7 +100,7 @@ const RatingsModal = ({
     <Modal>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-8 rounded-2xl bg-white min-w-[480px] max-w-lg "
+        className="lg:p-8 p-4 w-[90vw] rounded-2xl bg-white lg:min-w-[480px] lg:max-w-lg "
       >
         <div className="flex flex-col max-h-[80vh] p-1 overflow-y-auto">
           <div className="flex items-center justify-between">

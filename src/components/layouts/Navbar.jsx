@@ -19,11 +19,13 @@ const Navbar = () => {
 
   return (
     <div>
+      {/* for mobile */}
       <div className="fixed top-0 left-0 z-50 w-[100vw] lg:hidden block bg-[#111822] px-8 py-5">
         <div className="flex items-center justify-between w-full ">
           <Link href="/" className="logo ">
             KocFreelancing <i className="ri-user-follow-line"></i>
           </Link>
+          {isAuthenticated && <AccountMenu />}
           {!showMenu ? (
             <MdMenu
               className="w-7 h-7 text-white"
@@ -79,9 +81,7 @@ const Navbar = () => {
                 <a className=" hover:underline text-white">Categories</a>
               </div>
             )}
-            {isAuthenticated ? (
-              <AccountMenu />
-            ) : (
+            {!isAuthenticated && (
               <div className="flex items-center  my-2 ">
                 <Link href="/auth/login" className="login-btn">
                   Giriş
@@ -94,7 +94,7 @@ const Navbar = () => {
           </div>
         )}
       </div>
-
+      {/* for pc  */}
       <div className="fixed top-0 right-0 z-50 w-[100vw] hidden lg:flex items-center justify-between bg-[#111822] px-8 py-5">
         <div className="flex items-center justify-center ">
           <Link href="/" className="logo ">

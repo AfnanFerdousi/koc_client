@@ -140,7 +140,7 @@ const EducationModal = ({
 
   return (
     <Modal>
-      <div className="p-8 rounded-2xl bg-white min-w-[768px] max-w-lg relative">
+      <div className="lg:p-8 p-4 w-[90vw] rounded-2xl bg-white lg:min-w-[768px] lg:max-w-lg relative">
         <div className="flex flex-col max-h-[80vh] p-1 overflow-y-auto">
           <div className="flex items-center justify-between">
             <p className="text-3xl font-semibold">Add education</p>

@@ -92,20 +92,20 @@ const MainContent = ({ userProfile, isMine }) => {
       {/* Info section */}
       <div className="p-6 border-b">
         <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between gap-x-3 mb-6">
-            <p className="text-2xl font-semibold ">
+          <div className="lg:flex  items-center justify-between gap-x-3 mb-6">
+            <p className="lg:text-2xl text-lg font-semibold ">
               {userProfile?.sub_title
                 ? userProfile?.sub_title
                 : "No title added"}
             </p>
-            <button className="rounded-3xl font-medium px-3 py-1 bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
+            <button className="rounded-3xl mt-2 lg:mt-0 font-medium px-3 py-1 bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
               {userProfile?.hourly_rate
                 ? userProfile?.hourly_rate.toFixed(2) + "$/hr"
                 : "0.00$/hr"}
             </button>
           </div>
           <div
-            className={`rounded-full p-[6px] border-[1px] border-primary hover:bg-gray-50 cursor-pointer transition-all ${
+            className={`rounded-full  p-[6px] border-[1px] border-primary hover:bg-gray-50 cursor-pointer transition-all ${
               !isMine && "hidden"
             }`}
             onClick={() => {

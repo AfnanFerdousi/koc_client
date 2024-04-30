@@ -88,7 +88,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
   };
 
   return (
-    <div className="col-span-1 lg:border-r">
+    <div className="col-span-1 border-b lg:border-b-0 lg:border-r">
       {/* Stats section */}
       <div className="grid grid-cols-3  gap-2 place-items-center items-center border-b p-3">
         {[

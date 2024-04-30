@@ -62,9 +62,11 @@ const Experiences = ({ userProfile, isMine }) => {
   });
 
   return (
-    <div className="border rounded-3xl max-w-screen-xl p-6 mt-8 mb-28 mx-auto">
+    <div className="mx-2 border rounded-3xl max-w-screen-xl p-6 mt-8 mb-28 lg:mx-auto">
       <div className="flex items-center justify-between">
-        <p className="text-3xl font-semibold mb-4">Employment History</p>
+        <p className="text-2xl lg:text-3xl font-semibold mb-4">
+          Employment History
+        </p>
 
         <div
           className={`rounded-full p-[6px] border-[1px] border-primary hover:bg-gray-50 cursor-pointer transition-all ${

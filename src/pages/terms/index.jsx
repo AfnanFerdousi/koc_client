@@ -37,7 +37,7 @@ const Terms = () => {
           <div className="loader"></div>
         </div>
       ) : (
-        <div className="mt-28 mx-auto max-w-screen-xl">
+        <div className="mt-28 mx-2 lg:mx-auto max-w-screen-xl">
           <div className="border rounded-3xl w-full my-6 p-6 ">
             <p className="text-3xl font-medium mb-6">Terms and Conditions</p>
             <p className="text-secondary">

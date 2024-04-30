@@ -186,26 +186,26 @@ const ProjectCard = ({
           />
         )}
       </div>
-      <div className="flex items-center mb-2">
+      <div className="lg:flex space-y-2 lg:space-y-0 items-center mb-2">
         <h2 className="text-xl font-semibold group-hover:text-primary">
           {title}
         </h2>
-        <button className="rounded-3xl ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
+        <button className="rounded-3xl lg:ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
           {status}
         </button>
         <button className="rounded-3xl ml-2 px-4 py-1 text-sm bg-primary bg-opacity-[0.18] text-secondary text-center active:scale-95 ">
           {category?.name}
         </button>
       </div>
-      <div className="flex items-center  ">
-        <p className=" pt-3 text-secondary ">
+      <div className="lg:flex items-center pt-3 lg:pt-0 ">
+        <p className="  text-secondary ">
           Est. budget : <span className="font-medium">${budget}</span> |
         </p>
 
-        <p className=" pt-3 text-secondary ml-1">
+        <p className="  text-secondary lg:ml-1">
           Est. duration : <span className="font-medium">{deadline} days</span> |
         </p>
-        <p className=" pt-3 text-secondary ml-1">
+        <p className="  text-secondary lg:ml-1">
           Project size : <span className="font-medium">{project_size} </span>
         </p>
       </div>
@@ -214,7 +214,7 @@ const ProjectCard = ({
         className="py-3 text-green-900"
       />
       {!myJob && (
-        <div className="flex justify-start gap-x-6 items-center">
+        <div className="lg:flex space-y-1 lg:space-y-0 justify-start gap-x-6 items-center">
           {profile?.payment_verified ? (
             profile?.payment_verified
           ) : user?.profile?.payment_verified ? (

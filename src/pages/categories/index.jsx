@@ -79,7 +79,7 @@ const Categories = () => {
             onChange={(event) => setSearchTerm(event.target.value)}
           />
         </div>
-        <p className="my-8 font-medium  text-2xl ">
+        <p className="my-8 font-medium text-lg lg:text-2xl ">
           Categories you're looking for ({categories?.length})
         </p>
 

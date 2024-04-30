@@ -191,11 +191,11 @@ const Jobs = () => {
             Post a new job
           </button>
           <div className="flex items-center justify-between mt-4 lg:my-8 ">
-            <p className="font-medium text-xl lg:text-2xl">
+            <p className="font-medium text-lg lg:text-2xl">
               Jobs you might like
             </p>
             {!(activeJobs === "myJobs" || activeJobs === "bookmarks") && (
-              <p>
+              <div className="lg:block flex flex-col justify-end ">
                 {" "}
                 <label
                   htmlFor="sort"
@@ -236,11 +236,11 @@ const Jobs = () => {
                   <option value="Lowest Price">Lowest Price</option>
                   <option value="Highest Price">Highest Price</option>
                 </select>
-              </p>
+              </div>
             )}
           </div>
           <div className="lg:hidden mb-4 col-span-1">
-            <p className="lg:my-8 mt-4 font-medium text-lg lg:text-2xl">
+            <p className="lg:my-8 mt-4 mx-2 lg:mx-0 font-medium text-lg lg:text-2xl">
               Filters
             </p>
             <div className=" w-full  overflow-y-scroll no-scrollbar border  rounded-3xl bg-[#ffffff] overflow-hidden py-3 px-3">

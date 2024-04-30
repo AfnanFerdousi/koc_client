@@ -66,13 +66,13 @@ export default function Profile() {
         <NotFound />
       ) : (
         <>
-          <div className="border rounded-3xl max-w-screen-xl mt-28 mx-auto">
+          <div className="border rounded-3xl max-w-screen-xl mt-28 mx-2 lg:mx-auto">
             <ProfileHeader
               isMine={false}
               userProfile={profileData}
               isLoading={isLoading}
             />
-            <div className="grid grid-cols-3">
+            <div className="lg:grid grid-cols-3">
               {" "}
               <LeftSideBar isMine={false} userProfile={profileData} />
               <MainContent isMine={false} userProfile={profileData} />
