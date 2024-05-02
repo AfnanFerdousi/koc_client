@@ -39,7 +39,7 @@ const ConfirmationModal = ({ title = "item", loading, onClose, onConfirm }) => {
               </h3>
               <div className="flex items-center justify-between space-x-2 pt-3 border-t">
                 <button
-                  className={`px-4  font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-opacity-90 transition-all focus:outline-none w-full ${
+                  className={`px-4 whitespace-nowrap  font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-opacity-90 transition-all focus:outline-none w-full ${
                     loading ? "cursor-not-allowed py-[18px] opacity-50" : "py-3"
                   }`}
                   onClick={onConfirm}

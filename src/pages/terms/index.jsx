@@ -6,6 +6,7 @@ import { setLoading } from "../../redux/reducers/loadingSlice";
 import { getTerms } from "../../axios/axios";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
+import { formatDistance } from "date-fns";
 
 const Terms = () => {
   const loading = useSelector((state) => state.loading?.loading);
@@ -39,9 +40,20 @@ const Terms = () => {
       ) : (
         <div className="mt-28 mx-2 lg:mx-auto max-w-screen-xl">
           <div className="border rounded-3xl w-full my-6 p-6 ">
-            <p className="text-3xl font-medium mb-6">Terms and Conditions</p>
+            <p className="text-3xl font-medium">Terms and Conditions</p>
+            <p className=" leading-normal font-medium text-secondary mb-4 mt-2">
+              {terms?.[0]?.updatedAt &&
+                (({ timestamp }) => (
+                  <span>
+                    Last updated{" "}
+                    {formatDistance(new Date(timestamp), new Date(), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                ))({ timestamp: terms?.[0]?.updatedAt ?? 0 })}
+            </p>
             <p className="text-secondary">
-              {terms?.terms ?? (
+              {terms?.[0]?.content ?? (
                 <div className="flex items-center justify-center">
                   <Image
                     src="/assets/404.png"

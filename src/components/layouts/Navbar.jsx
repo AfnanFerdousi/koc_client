@@ -1,16 +1,16 @@
-import * as React from "react";
-import AccountMenu from "./menu";
-import MenuBar from "./menuBar";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { RxCross1 } from "react-icons/rx";
 import { MdMenu } from "react-icons/md";
+import React from "react";
+import { useEffect, useState } from "react";
+import AccountMenu from "./menu";
 
 const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [showMenu, setShowMenu] = React.useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
-  React.useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       setIsAuthenticated(true);
@@ -77,8 +77,12 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="navlist">
-                <a className=" hover:underline text-white">Jobs</a>
-                <a className=" hover:underline text-white">Categories</a>
+                <Link href="/jobs" className="nav-text">
+                  Jobs
+                </Link>
+                <Link href="/categories" className="nav-text">
+                  Categories
+                </Link>
               </div>
             )}
             {!isAuthenticated && (
@@ -137,8 +141,12 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="navlist">
-              <a className="nav-text">Jobs</a>
-              <a className="nav-text">Categories</a>
+              <Link href="/jobs" className="nav-text">
+                Jobs
+              </Link>
+              <Link href="/categories" className="nav-text">
+                Categories
+              </Link>
             </div>
           )}
         </div>
