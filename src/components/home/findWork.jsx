@@ -1,4 +1,5 @@
 import { Container, Stack } from "@mui/material";
+import Link from "next/link";
 
 export const FindWork = () => {
   return (
@@ -32,9 +33,9 @@ export const FindWork = () => {
                 teklif ücretini de işi alamadığın taktirde
                 <b>geri iade</b> alıyorsun.
               </p>
-              <a href="">
+              <Link href="/categories">
                 <button className="button2">İlanlara Gözat</button>
-              </a>
+              </Link>
             </div>
             <div style={{ width: "50%" }}>
               <img src="assets/img/body4.png" alt="body4" />
