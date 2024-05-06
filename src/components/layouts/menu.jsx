@@ -392,12 +392,12 @@ const AccountMenu = () => {
             title="logout"
             loading={loading || userLoading}
             onClose={() => setShowConfirmationModal(false)}
-            onConfirm={async () => {
-              await setLoading(true);
-              await localStorage.removeItem("accessToken");
-              await localStorage.removeItem("userId");
-              await setLoading(false);
-              await router.push("/auth/login");
+            onConfirm={() => {
+              setLoading(true);
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("userId");
+              setLoading(false);
+              router.push("/auth/login");
             }}
           />
         )}
