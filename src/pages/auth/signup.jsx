@@ -411,7 +411,7 @@ const SignupPage = () => {
                           name="phone_number"
                           {...register("phone_number", { required: true })}
                           className=" mx-2 bg-[#1f2029]  text-base border-none  w-full !outline-none  font-poppins"
-                          placeholder="Last Name"
+                          placeholder="Phone Number"
                         />
                       </div>
                     </div>
@@ -504,14 +504,12 @@ const SignupPage = () => {
                         </label>
                       </div>
                       <p className="text-base">
-                        I agree to the{" "}
                         <Link
                           className="underline font-medium cursor-pointer hover:no-underline"
                           href="/terms"
                         >
-                          terms and conditions
+                          Kullanıcı Sözleşmesi
                         </Link>
-                        .
                       </p>
                     </div>
                   </Stack>
