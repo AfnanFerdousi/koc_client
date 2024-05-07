@@ -16,6 +16,8 @@
     "@mui/material": "^5.15.12",
     "@reduxjs/toolkit": "^2.2.2",
     "@smastrom/react-rating": "^1.5.0",
+    "@tencentcloud/chat-uikit-react": "^2.1.2",
+    "@tencentcloud/tui-core": "^2.1.2",
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
     "date-fns": "^3.6.0",

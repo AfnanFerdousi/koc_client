@@ -11,10 +11,12 @@ export const PopularCategory = ({ categories, categoryLoading }) => {
   const router = useRouter();
 
   return (
-    <div className="card1">
-      <Stack>
-        <h1 className="h1">Popüler Kategoriler</h1>
-      </Stack>
+    <div className="bg-[whitesmoke]">
+      <div>
+        <h1 className="text-4xl text-[#03446a] text-center w-full mb-[50px] pt-7 lg:pt-[45px]">
+          Popüler Kategoriler
+        </h1>
+      </div>
       <Container>
         <div className=" max-w-screen-xl grid grid-cols-1 lg:grid-cols-3  gap-x-6 gap-y-24 mt-20 mb-14 mx-auto">
           {categoryLoading ? (
@@ -82,7 +84,7 @@ export const PopularCategory = ({ categories, categoryLoading }) => {
         </div>
         <div className="flex items-center justify-center my-8">
           <Link
-            className=" rounded-3xl  lg:py-4 lg:px-8 px-4 py-2  bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95 "
+            className=" rounded-3xl  py-3 px-8    bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95 "
             href="/categories"
           >
             See all Categories

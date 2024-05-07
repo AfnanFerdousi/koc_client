@@ -1,32 +1,33 @@
-"use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { showProducts } from "../../constants/data";
+import { FaRegEye } from "react-icons/fa";
 
 export const Projects = () => {
-  const [select, setSelect] = useState();
-  const handleClick = (index) => {
-    if (select === index) {
-      setSelect(10);
-    } else {
-      setSelect(index);
-    }
-  };
+  const [select, setSelect] = useState(null);
 
   return (
     <div className="eye-section">
       <div className="product-title">
-        KOCFREELANCING&apos;E YAPILAN İLHAM VERİCİ ÇALIŞMALAR
+        KOCFREELANCING'TE YAPILAN İLHAM VERİCİ ÇALIŞMALAR
       </div>
       <ul className="eye-card">
         {showProducts.map((element, idx) => {
           return (
             <li
               key={`showproducts-${idx}`}
-              className={`card-item  ${select === idx && "expand"}`}
+              className={`card-item ${select === idx && "expand"}`}
             >
               <img src={element} alt="" />
-              <span>
-                <i className="ri-eye-line" onClick={() => handleClick(idx)}></i>
+              <span
+                onClick={() => {
+                  if (select === idx) {
+                    setSelect(null);
+                  } else {
+                    setSelect(idx);
+                  }
+                }}
+              >
+                <FaRegEye className="w-6 h-6" />
               </span>
             </li>
           );

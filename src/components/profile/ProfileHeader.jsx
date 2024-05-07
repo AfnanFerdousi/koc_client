@@ -228,7 +228,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 if (userProfile) {
-                  setShowHireNowModal(item?.user?._id);
+                  setShowHireNowModal(userProfile?.user?._id);
                 } else {
                   router.push("/auth/login");
                 }

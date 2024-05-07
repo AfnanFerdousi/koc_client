@@ -69,13 +69,6 @@ const AccountMenu = () => {
     handleClose(e);
   };
 
-  const handleLogout = (event) => {
-    handleClose(event);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userId");
-    router.push(`/auth/login`);
-  };
-
   function handleListKeyDown(event) {
     if (event.key === "Tab") {
       event.preventDefault();
@@ -400,10 +393,11 @@ const AccountMenu = () => {
             loading={loading || userLoading}
             onClose={() => setShowConfirmationModal(false)}
             onConfirm={() => {
+              setLoading(true);
               localStorage.removeItem("accessToken");
               localStorage.removeItem("userId");
-              router.reload();
-              router.push("/login");
+              setLoading(false);
+              router.push("/auth/login");
             }}
           />
         )}
