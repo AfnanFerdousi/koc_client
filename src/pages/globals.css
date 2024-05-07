@@ -507,7 +507,6 @@ form .ri-search-line {
   box-shadow: 0 0 10px rgb(53, 185, 0), 0 0 50px rgb(53, 185, 0);
   filter: grayscale(0);
 }
-
 .header {
   position: fixed;
   right: 0;
