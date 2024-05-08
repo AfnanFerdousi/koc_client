@@ -504,7 +504,7 @@ form .ri-search-line {
 .expand {
   width: 400px;
   border-radius: 20px;
-  box-shadow: 0 0 10px rgb(53, 185, 0), 0 0 50px rgb(53, 185, 0);
+  box-shadow: 0 0 1px rgb(53, 185, 0), 0 0 1px rgb(53, 185, 0);
   filter: grayscale(0);
 }
 .header {
