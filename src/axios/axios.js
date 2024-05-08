@@ -587,6 +587,21 @@ export const patchReadNotifications = createAsyncThunk(
     }
   }
 );
+export const postInitiateChat = createAsyncThunk(
+  "Chat/fetchSkillsData",
+  async (userId, thunkAPI) => {
+    try {
+      const response = await Axios.post(
+        `https://adminapisgp.im.qcloud.com/v4/im_open_login_svc/account_import`,
+        { userId },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 export const getTerms = createAsyncThunk(
   "Clients/fetchSkillsData",

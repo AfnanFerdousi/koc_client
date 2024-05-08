@@ -98,6 +98,15 @@ const SignupPage = () => {
         setUserId(response.payload.data._id);
         setUserEmail(data.email);
         setState("info");
+        dispatch(postInitiateChat(response.payload.data._id))
+          .then((response) => {
+            // Handle successful response
+            console.log("API call successful:", response);
+          })
+          .catch((error) => {
+            // Handle error
+            console.error("API call failed:", error);
+          });
       }
     } catch (error) {
       console.error("Registration failed:", error);
