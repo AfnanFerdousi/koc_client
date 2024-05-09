@@ -81,7 +81,7 @@ export const TopContent = ({ categories, categoryLoading }) => {
           {" "}
           Popüler:{" "}
           {!categoryLoading ? (
-            categories.length > 0 ? (
+            categories?.length > 0 ? (
               categories.slice(0, 4).map((item, index) => (
                 <Link href={`/category/${item._id}`} key={index}>
                   {item.name}
