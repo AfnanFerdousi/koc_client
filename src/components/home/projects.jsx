@@ -6,7 +6,7 @@ export const Projects = () => {
   const [select, setSelect] = useState(null);
 
   return (
-    <div className="eye-section">
+    <div className="eye-section hidden lg:block">
       <div className="product-title">
         KOCFREELANCING'TE YAPILAN İLHAM VERİCİ ÇALIŞMALAR
       </div>

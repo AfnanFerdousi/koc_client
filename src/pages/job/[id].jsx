@@ -368,7 +368,7 @@ const Job = () => {
 
                   {jobData?.proposals?.some(
                     (proposal) =>
-                      proposal.created_by._id === userProfile?.user?._id
+                      proposal?.created_by?._id === userProfile?.user?._id
                   ) ? (
                     <p>You have already placed a bid for this job.</p>
                   ) : jobData?.status !== "open" ? (
@@ -502,7 +502,8 @@ const Job = () => {
                     {/* Proposals from the user */}
                     {jobData?.proposals
                       ?.filter(
-                        (item) => item.created_by._id === userProfile?.user?._id
+                        (item) =>
+                          item?.created_by?._id === userProfile?.user?._id
                       )
                       ?.map((item, index) => (
                         <div
@@ -680,7 +681,8 @@ const Job = () => {
                     {/* Other proposals */}
                     {jobData?.proposals
                       ?.filter(
-                        (item) => item.created_by._id !== userProfile?.user?._id
+                        (item) =>
+                          item?.created_by?._id !== userProfile?.user?._id
                       )
                       ?.map((item, index) => (
                         <div
@@ -701,7 +703,11 @@ const Job = () => {
                           <div className="lg:flex space-y-2 lg:space-y-0 items-start justify-between mb-2">
                             <div
                               className="lg:flex items-center gap-x-2 cursor-pointer group"
-                              onClick={() => router.push(`/profile/me`)}
+                              onClick={() =>
+                                router.push(
+                                  `/profile/${item?.created_by?.profile?.user}`
+                                )
+                              }
                             >
                               {item?.created_by?.profile?.user
                                 .profile_picture ? (
