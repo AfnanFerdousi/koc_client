@@ -216,7 +216,16 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 if (userProfile) {
-                  setShowHireNowModal(userProfile?.user?._id);
+                  if (
+                    userProfile?.description &&
+                    userProfile?.hourly_rate &&
+                    userProfile?.sub_title
+                  ) {
+                    setShowHireNowModal(userProfile?.user?._id);
+                  } else {
+                    toast.error("Please complete your profile first");
+                    router.push("/profile/me");
+                  }
                 } else {
                   router.push("/auth/login");
                 }

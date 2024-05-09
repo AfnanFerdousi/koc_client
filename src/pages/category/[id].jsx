@@ -261,7 +261,18 @@ const Category = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             if (userProfile) {
-                              setShowHireNowModal(item?.user?._id);
+                              if (
+                                userProfile?.description &&
+                                userProfile?.hourly_rate &&
+                                userProfile?.sub_title
+                              ) {
+                                setShowHireNowModal(item?.user?._id);
+                              } else {
+                                toast.error(
+                                  "Please complete your profile first"
+                                );
+                                router.push("/profile/me");
+                              }
                             } else {
                               router.push("/auth/login");
                             }

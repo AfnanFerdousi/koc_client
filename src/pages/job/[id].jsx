@@ -86,25 +86,33 @@ const Job = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    dispatch(setLoading(true));
-    dispatch(
-      addProposal({
-        dynamicParams: { userId: userProfile?.user?._id },
-        bodyData: { ...data, offer: id, created_by: userProfile?.user?._id },
-      })
-    )
-      .then(() => {
-        dispatch(getJobById({ userId: userProfile?.user?._id, jobId: id }));
-      })
-      .then(() => {
-        dispatch(setLoading(false));
-        reset();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        dispatch(setLoading(false));
-      });
-    console.log(data);
+    if (
+      userProfile?.description &&
+      userProfile?.hourly_rate &&
+      userProfile?.sub_title
+    ) {
+      dispatch(setLoading(true));
+      dispatch(
+        addProposal({
+          dynamicParams: { userId: userProfile?.user?._id },
+          bodyData: { ...data, offer: id, created_by: userProfile?.user?._id },
+        })
+      )
+        .then(() => {
+          dispatch(getJobById({ userId: userProfile?.user?._id, jobId: id }));
+        })
+        .then(() => {
+          dispatch(setLoading(false));
+          reset();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          dispatch(setLoading(false));
+        });
+    } else {
+      toast.error("Please complete your profile first");
+      router.push("/profile/me");
+    }
   };
 
   const handleAddBookmark = (id) => {
