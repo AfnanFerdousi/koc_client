@@ -9,7 +9,9 @@ const nextConfig = {
     domains: ["as2.ftcdn.net", "wallpapers.com", "i.ibb.co"],
   },
   webpack: (config, { isServer }) => {
+        // Set up an alias for the src directory
     config.resolve.alias["@"] = path.resolve(__dirname, "./src");
+
     return config;
   },
 };
