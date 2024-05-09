@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
 import { MdEdit } from "react-icons/md";
 import { AnimatePresence } from "framer-motion";
 import AddSettingsModal from "../../components/modals/SettingsModal";
-import { getCountries } from "../../axios/axios";
-import { setLoading } from "@/redux/reducers/loadingSlice";
 import ProtectedRoute from "../../components/layouts/ProtectedRoute";
 
 export default function Profile() {
@@ -16,7 +14,6 @@ export default function Profile() {
   const isLoading = useSelector((state) => state.user?.loading);
   const loading = useSelector((state) => state.loading?.loading);
   const [showModal, setShowModal] = useState(false);
-  const dispatch = useDispatch();
   // Log profile data for debugging
   useEffect(() => {
     console.log("profile", userProfile);
@@ -28,35 +25,10 @@ export default function Profile() {
     { name: "Email Address", value: userProfile?.user?.email },
     { name: "Phone Number", value: userProfile?.user?.phone_number },
     { name: "Category", value: userProfile?.category?.name },
-    { name: "City", value: userProfile?.city },
-    { name: "Country", value: userProfile?.country },
-    { name: "Timezone", value: userProfile?.timezone },
+    { name: "Country", value: "Turkey" },
+    { name: "Province", value: userProfile?.city },
   ];
 
-  // for sending all cities of the country
-  const [cities, setCities] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      dispatch(setLoading(true));
-      try {
-        // Fetch countries data
-        const countriesResponse = await dispatch(getCountries());
-        setCities(
-          countriesResponse?.payload?.data
-            ?.map((item) => ({
-              value: item.name,
-              cities: item.cities,
-            }))
-            .find((item) => item.value === userProfile?.country).cities
-        );
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-      dispatch(setLoading(false));
-    };
-
-    fetchData();
-  }, [dispatch, userProfile?.country]);
   return (
     <ProtectedRoute>
       <Head>
@@ -103,16 +75,10 @@ export default function Profile() {
                 value: userProfile?.category?._id,
                 label: userProfile?.category?.name,
               },
-              country: {
-                value: userProfile?.country,
-                label: userProfile?.country,
-                cities: cities,
-              },
               city: {
                 value: userProfile?.city,
                 label: userProfile?.city,
               },
-              timezone: userProfile?.timezone,
             }}
             isEdit={true}
           />

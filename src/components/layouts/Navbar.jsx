@@ -59,12 +59,20 @@ const Navbar = () => {
                   Categories
                 </Link>
                 <Link
+                  href="/messages"
+                  className={`${
+                    router.pathname === "/messages" && "!text-primary"
+                  }  hover:underline text-white`}
+                >
+                  Messages
+                </Link>
+                <Link
                   href="/myhires"
                   className={`${
                     router.pathname === "/myhires" && "!text-primary"
                   }  hover:underline text-white`}
                 >
-                  Hired Freelancers
+                  My Hires
                 </Link>
                 <Link
                   href="/myclients"
@@ -125,101 +133,111 @@ const Navbar = () => {
         )}
       </div>
       {/* for pc  */}
-      <div className="fixed top-0 right-0 z-50 w-[100vw] hidden lg:flex items-center justify-between bg-[#111822] px-8 py-5">
-        <div className="flex items-center ">
-          <Link href="/" className="logo ">
-            KocFreelancing <i className="ri-user-follow-line"></i>
-          </Link>
-        </div>
-        <div className="flex items-center justify-center gap-x-2">
-          <div>
-            {" "}
-            {isAuthenticated ? (
-              <div className="navlist">
-                <Link
-                  href="/jobs"
-                  className={`${
-                    router.pathname === "/jobs" && "!text-primary"
-                  } nav-text`}
-                >
-                  Jobs
-                </Link>
-                <Link
-                  href="/categories"
-                  className={`${
-                    router.pathname === "/categories" && "!text-primary"
-                  } nav-text`}
-                >
-                  Categories
-                </Link>
-                <Link
-                  href="/myhires"
-                  className={`${
-                    router.pathname === "/myhires" && "!text-primary"
-                  } nav-text`}
-                >
-                  Hired Freelancers
-                </Link>
-                <Link
-                  href="/myclients"
-                  className={`${
-                    router.pathname === "/myclients" && "!text-primary"
-                  } nav-text`}
-                >
-                  My Clients
-                </Link>
-                <Link
-                  href="/contact"
-                  className={`${
-                    router.pathname === "/contact" && "!text-primary"
-                  } nav-text`}
-                >
-                  Contact US
-                </Link>
-              </div>
-            ) : (
-              <div className="navlist">
-                <Link
-                  href="/jobs"
-                  className={`${
-                    router.pathname === "/jobs" && "!text-primary"
-                  } nav-text`}
-                >
-                  Jobs
-                </Link>
-                <Link
-                  href="/categories"
-                  className={`${
-                    router.pathname === "/categories" && "!text-primary"
-                  } nav-text`}
-                >
-                  Categories
-                </Link>
-                <Link
-                  href="/contact"
-                  className={`${
-                    router.pathname === "/contact" && "!text-primary"
-                  } nav-text`}
-                >
-                  Contact Us
-                </Link>
-              </div>
-            )}
+      <div className="fixed top-0 right-0 z-50 w-[100vw] hidden lg:flex items-center justify-center bg-[#111822] px-8 py-5">
+        <div className="!w-[1280px] bfg-primary flex items-center justify-between ">
+          <div className="flex items-center ">
+            <Link href="/" className="logo ">
+              KocFreelancing <i className="ri-user-follow-line"></i>
+            </Link>
           </div>
-          <div>
-            {" "}
-            {isAuthenticated ? (
-              <AccountMenu />
-            ) : (
-              <div className="btn-group">
-                <Link href="/auth/login" className="login-btn">
-                  Giriş
-                </Link>
-                <Link href="/auth/signup" className="signup-btn">
-                  Kayıt
-                </Link>
-              </div>
-            )}
+          <div className="flex items-center justify-center gap-x-4">
+            <div>
+              {" "}
+              {isAuthenticated ? (
+                <div className="navlist">
+                  <Link
+                    href="/jobs"
+                    className={`${
+                      router.pathname === "/jobs" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Jobs
+                  </Link>
+                  <Link
+                    href="/categories"
+                    className={`${
+                      router.pathname === "/categories" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Categories
+                  </Link>
+                  <Link
+                    href="/messages"
+                    className={`${
+                      router.pathname === "/messages" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Messages
+                  </Link>
+                  <Link
+                    href="/myhires"
+                    className={`${
+                      router.pathname === "/myhires" && "!text-primary"
+                    } nav-text`}
+                  >
+                    My Hires
+                  </Link>
+                  <Link
+                    href="/myclients"
+                    className={`${
+                      router.pathname === "/myclients" && "!text-primary"
+                    } nav-text`}
+                  >
+                    My Clients
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className={`${
+                      router.pathname === "/contact" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Contact Us
+                  </Link>
+                </div>
+              ) : (
+                <div className="navlist">
+                  <Link
+                    href="/jobs"
+                    className={`${
+                      router.pathname === "/jobs" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Jobs
+                  </Link>
+                  <Link
+                    href="/categories"
+                    className={`${
+                      router.pathname === "/categories" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Categories
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className={`${
+                      router.pathname === "/contact" && "!text-primary"
+                    } nav-text`}
+                  >
+                    Contact Us
+                  </Link>
+                </div>
+              )}
+            </div>
+            <div>
+              {" "}
+              {isAuthenticated ? (
+                <AccountMenu />
+              ) : (
+                <div className="btn-group">
+                  <Link href="/auth/login" className="login-btn">
+                    Giriş
+                  </Link>
+                  <Link href="/auth/signup" className="signup-btn">
+                    Kayıt
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

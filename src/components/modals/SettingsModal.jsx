@@ -11,6 +11,7 @@ import {
 import { setLoading } from "@/redux/reducers/loadingSlice";
 import { useForm } from "react-hook-form";
 import Select from "react-tailwindcss-select";
+import { turkishCities } from "../../constants/data";
 
 const SettingsModal = ({
   setShowSettingsModal,
@@ -30,11 +31,7 @@ const SettingsModal = ({
   });
   const loading = useSelector((state) => state.loading.loading);
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [countriesOptions, setCountriesOptions] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(
-    initialData.country || null
-  );
+
   const [selectedCity, setSelectedCity] = useState(initialData.city || null);
   const [selectedCategory, setSelectedCategory] = useState(
     initialData.category || null
@@ -44,16 +41,6 @@ const SettingsModal = ({
     const fetchData = async () => {
       dispatch(setLoading(true));
       try {
-        // Fetch countries data
-        const countriesResponse = await dispatch(getCountries());
-        setCountriesOptions(
-          countriesResponse?.payload?.data?.map((item) => ({
-            value: item.name,
-            label: item.name ?? "",
-            cities: item.cities,
-          }))
-        );
-
         // Fetch categories data
         const categoriesResponse = await dispatch(getCategories(""));
         setCategoryOptions(
@@ -71,28 +58,6 @@ const SettingsModal = ({
     fetchData();
   }, [dispatch]);
 
-  useEffect(() => {
-    if (selectedCountry) {
-      const country = countriesOptions.find(
-        (c) => c.value === selectedCountry.value
-      );
-      setCities(
-        country
-          ? country?.cities?.map((city) => ({ value: city, label: city }))
-          : []
-      );
-    }
-  }, [selectedCountry, countriesOptions]);
-
-  useEffect(() => {
-    if (selectedCountry) {
-      if (!selectedCountry?.cities?.includes(selectedCity?.value)) {
-        setSelectedCity("");
-      }
-    }
-  }, [selectedCountry, countriesOptions, selectedCity?.value]);
-
-  console.log(selectedCountry);
   const onSubmit = (data) => {
     dispatch(setLoading(true));
     dispatch(
@@ -101,7 +66,6 @@ const SettingsModal = ({
         bodyData: {
           user: { first_name: data.first_name, lastName: data.lastName },
           profile: {
-            country: selectedCountry.value,
             city: selectedCity.value,
             category: selectedCategory.value,
           },
@@ -210,55 +174,16 @@ const SettingsModal = ({
                 This field is required
               </span>
             )}
-            <div className="">
-              <label htmlFor="country" className="col-span-full font-medium ">
-                Country
-              </label>
-              <Select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e)}
-                options={countriesOptions}
-                isSearchable
-                loading={loading}
-                primaryColor={"lime"}
-                placeholder="Select Country"
-                classNames={{
-                  menuButton: ({ isDisabled }) =>
-                    `flex rounded-lg text-black border border-gray-300 p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
-                      isDisabled
-                        ? "bg-gray-100"
-                        : "bg-white hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
-                    }`,
-                  menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-2 mt-1.5 rounded-lg text-gray-700",
-                  listItem: ({ isSelected }) =>
-                    `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded ${
-                      isSelected
-                        ? `text-white bg-primary`
-                        : `text-black hover:bg-green-100 hover:text-primary`
-                    }`,
-                }}
-              />
-            </div>
-            {errors.country && (
-              <span className="w-full text-red-500  -mt-1 cursor-context-menu">
-                This field is required
-              </span>
-            )}
+
             <div className="">
               <label htmlFor="city" className="col-span-full font-medium ">
-                City
+                Province
               </label>
               <div className="relative">
-                {console.log(
-                  selectedCountry,
-                  selectedCity?.value,
-                  !!selectedCountry?.cities?.includes(selectedCity?.value)
-                )}
                 <Select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e)}
-                  options={cities}
-                  isDisabled={cities?.length === 0}
+                  options={turkishCities}
                   isSearchable
                   loading={loading}
                   primaryColor={"lime"}

@@ -248,9 +248,10 @@ const AccountMenu = () => {
                           tabIndex={0}
                           className="focus:outline-none text-sm flex flex-shrink-0 leading-normal px-3 py-8 text-secondary"
                         >
-                          {notifications?.length > 1
-                            ? "That's it for now"
-                            : "No notifications found"}
+                          {!loading &&
+                            (notifications?.length > 1
+                              ? "That's it for now"
+                              : "No notifications found")}
                         </p>
                         <hr className="w-full" />
                       </div>
@@ -288,7 +289,7 @@ const AccountMenu = () => {
                 height: 32,
                 backgroundColor: "#35B900",
                 color: "white",
-                fontSize: 16,
+                fontSize: 12,
               }}
             >
               {(userProfile?.user?.first_name?.slice(0, 1) ?? "") +

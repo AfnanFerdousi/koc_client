@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const FindWork = () => {
   return (
-    <div className="w-full bg-[rgb(231,255,221)] px-0 py-[45px]">
+    <div className="w-full bg-[rgb(231,255,221)]  px-0 py-[45px]">
       <div className="overflow-hidden mx-auto my-0">
         <Container>
           <Stack sx={{ position: "relative" }}>
@@ -11,24 +11,24 @@ export const FindWork = () => {
               <h1 className="text-[rgb(53,185,0)] text-3xl capitalize mb-10">
                 YETENEĞİN DOĞRULTUSUNDA İŞ BUL!
               </h1>
-              <p className="text-[rgb(92,91,91)] text-xl w-11/12 break-words text-left mb-[25px]">
+              <p className="text-[rgb(92,91,91)] text-xl  break-words text-left mb-[25px]">
                 <i className="ri-checkbox-circle-line"></i> Birlikte çalışmaktan
                 heyecan duyduğumuz iş verenlerimiz ile tanışın. Kariyerinizi ve
                 işinizi zirveye taşıyın.
               </p>
-              <p className="text-[rgb(92,91,91)] text-xl w-11/12 break-words text-left mb-[25px]">
+              <p className="text-[rgb(92,91,91)] text-xl  break-words text-left mb-[25px]">
                 <i className="ri-checkbox-circle-line"></i> Serbest
                 kariyerinizin her aşaması için fırsatlar bulun.
               </p>
-              <p className="text-[rgb(92,91,91)] text-xl w-11/12 break-words text-left mb-[25px]">
+              <p className="text-[rgb(92,91,91)] text-xl  break-words text-left mb-[25px]">
                 <i className="ri-checkbox-circle-line"></i> Ne zaman, nerede ve
                 nasıl çalışacağınıza kendiniz karar verin.
               </p>
-              <p className="text-[rgb(92,91,91)] text-xl w-11/12 break-words text-left mb-[25px]">
+              <p className="text-[rgb(92,91,91)] text-xl  break-words text-left mb-[25px]">
                 <i className="ri-checkbox-circle-line"></i> Kazanmak için
                 KocFreelancing&ados;i kontrol edin, fırsatları bulun.
               </p>
-              <p className="text-[rgb(92,91,91)] text-xl w-11/12 break-words text-left mb-[25px]">
+              <p className="text-[rgb(92,91,91)] text-xl  break-words text-left mb-[25px]">
                 <i className="ri-checkbox-circle-line"></i> Unutma!
                 KocFreelancing&ados;e <b>kayıt</b> olurken herhangi bir ücret
                 ödemiyorsun <b>ayrıca </b>iş İlanlarına teklif verirken ödediğin
@@ -48,7 +48,7 @@ export const FindWork = () => {
               <img
                 src="assets/img/body4.png"
                 alt="body4"
-                className="absolute  right-[-200px] w-[55%] top-0"
+                className="body4Image"
               />
             </div>
           </Stack>

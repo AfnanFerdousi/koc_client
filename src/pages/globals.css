@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900");
+@import url("https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap");
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
@@ -53,7 +54,12 @@
 .signature-font {
   font-family: "Aref Ruqaa Ink", serif;
 }
-
+.footer-font {
+  font-family: "Dancing Script", cursive;
+  font-weight: 100;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 .hero-text p {
   color: white;
   font-size: 15px;
@@ -305,7 +311,7 @@ form .ri-search-line {
   background-color: rgb(231, 255, 221);
 }
 
-.body4 img {
+.body4Image {
   position: absolute;
   content: "";
   top: 0px;

@@ -32,7 +32,6 @@ import {
 import { FaRegBookmark, FaRegUserCircle } from "react-icons/fa";
 import { setLoading } from "@/redux/reducers/loadingSlice";
 import { format, formatDistance } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
 import Image from "next/image";
 import Description from "../../components/ui/Description";
 import { AnimatePresence } from "framer-motion";
@@ -923,23 +922,7 @@ const Job = () => {
                   {jobData?.profile?.city}, {jobData?.profile?.country}
                 </span>
               </p>
-              <p className="flex items-center mt-2">
-                <MdAccessTime className="w-6 h-6 mr-1 -ml-1 text-secondary" />
-                <span className="text-lg text-secondary">
-                  {jobData &&
-                    date &&
-                    date != "Invalid Date" &&
-                    format(
-                      formatInTimeZone(
-                        new Date(),
-                        jobData?.profile?.timezone,
-                        "yyyy-MM-dd HH:mm:ss zzz"
-                      ),
-                      "h:mm a"
-                    )}{" "}
-                  local time
-                </span>
-              </p>
+
               <p className="flex items-center mt-2">
                 <MdJoinInner className="w-6 h-6 mr-1 -ml-1 text-secondary" />
                 <span className="text-lg text-secondary">
