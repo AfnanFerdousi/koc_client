@@ -3,10 +3,36 @@ import Head from "next/head";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
 import { useSelector } from "react-redux";
+import { Player, Controls } from '@lottiefiles/react-lottie-player';
+import axios from "axios"
+import toast from "react-hot-toast";
+
+
 const Contact = () => {
   const loading = useSelector((state) => state.user?.loading);
   const userProfile = useSelector((state) => state.user?.data);
+  const [subject, setSubject] = useState("")
+  const [message, setMessage] = useState("")
+const onSendEmail = async(e) => {
+  e.preventDefault()
+  try{
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/contact/sendEmail`, {     
+        first_name: userProfile?.user?.first_name,
+        last_name: userProfile?.user?.lastName,
+        email: userProfile?.user?.email,
+        subject: subject,
+        message: message      
+    });
+    if(res.status == 200){
+      toast.success("Message sent successfully")
+    }else{
+       toast.error("Something went wrong, try again later")
+    }
+  }catch(e){
+    console.log(e);
 
+  }
+}
   return (
     <div>
       <Head>
@@ -14,16 +40,27 @@ const Contact = () => {
       </Head>
       <Navbar />
 
-      <div className="mt-28 mx-2 lg:mx-auto max-w-screen-xl">
-        <div className="border rounded-3xl w-full my-6 p-6 ">
+      <div className=" max-w-screen-xl  my-28 mx-4 lg:mx-auto grid lg:md:grid-cols-2 grid-cols-1 gap-x-6 items-center">
+        <div className="lg:md:block hidden">
+          <Player
+            autoplay
+            loop
+            src="https://lottie.host/549354c4-d04c-43fa-a952-a6f476b42667/LmGO8bZWsF.json"
+            className="lg:md:h-[800px] h-[50vh]"
+          >
+            <Controls visible={false} buttons={['play', 'repeat', 'frame', 'debug']} />
+          </Player>
+        </div>
+      <div className="w-full">
+        <div className="border rounded-3xl w-full my-6 lg:md:p-6 p-2 ">
           <div className="flex items-center justify-center flex-col">
-            <p className="text-3xl font-medium">Contact Us</p>
-            <p className="text-secondary font-medium my-1 ">
+            <p className="lg:md:text-3xl text-2xl font-medium text-center">Contact Us</p>
+            <p className="text-secondary font-medium my-1 text-center">
               We'll connect with you as soon as possible.
             </p>
           </div>
           <form
-            // onSubmit={handleSubmit(onSubmit)}
+            onSubmit={onSendEmail}
             className="lg:p-8 p-4  rounded-2xl bg-white  "
           >
             <div className="flex flex-col  ">
@@ -53,7 +90,7 @@ const Contact = () => {
                       name="sub_title"
                       className="w-full p-3  border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
                       placeholder="Your Last Name"
-                      value={userProfile ? userProfile?.user?.last_name : ""}
+                      value={userProfile ? userProfile?.user?.lastName : ""}
                       disabled={userProfile ? true : false}
                     />
                   </div>
@@ -87,6 +124,7 @@ const Contact = () => {
                     name="subject"
                     className="col-span-full p-3  border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
                     placeholder="Enter Subject"
+                     onChange={(e) => setSubject(e.target.value)}
                   />
                 </div>
 
@@ -101,6 +139,7 @@ const Contact = () => {
                     id="description"
                     name="description"
                     rows={10}
+                     onChange={(e) => setMessage(e.target.value)}
                     className="w-full rounded-md border border-gray-300 shadow-sm p-3  focus:outline-none focus:ring-primary focus:border-primary mt-2"
                     placeholder="Enter Description"
                   ></textarea>
@@ -125,6 +164,9 @@ const Contact = () => {
             </div>
           </form>
         </div>
+        </div>
+
+       
       </div>
       <Footer />
     </div>

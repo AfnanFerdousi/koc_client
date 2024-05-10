@@ -22,10 +22,10 @@ const Navbar = () => {
       {/* for mobile */}
       <div className="fixed top-0 left-0 z-50 w-[100vw] lg:hidden block bg-[#111822] px-8 py-5">
         <div className="flex items-center justify-between w-full ">
-          <Link href="/" className="logo ">
+          <Link href="/" className="logo lg:md:text-2xl text-lg" >
             KocFreelancing <i className="ri-user-follow-line"></i>
           </Link>
-          {isAuthenticated && <AccountMenu />}
+          {/* {isAuthenticated && <AccountMenu />} */}
           {!showMenu ? (
             <MdMenu
               className="w-7 h-7 text-white"
@@ -39,7 +39,7 @@ const Navbar = () => {
           )}
         </div>
         {showMenu && (
-          <div className="bg-[#111822] w-full p-2 rounded">
+          <div className="bg-[#111822] w-full p-2 rounded">            
             {isAuthenticated ? (
               <div className="flex flex-col gap-2 ">
                 <Link
@@ -129,6 +129,10 @@ const Navbar = () => {
                 </Link>
               </div>
             )}
+
+            {isAuthenticated && (
+                <AccountMenu />
+              )}
           </div>
         )}
       </div>
@@ -223,7 +227,7 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-            <div>
+            <div className="lg:md:block hidden">
               {" "}
               {isAuthenticated ? (
                 <AccountMenu />

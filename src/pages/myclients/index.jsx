@@ -55,7 +55,7 @@ const MyFreelancers = () => {
           getClients({
             userId: userProfile.user._id,
             search: searchTerm,
-            status: active,
+            status: active == "all" ? "" : active,
           })
         );
         setData(response?.payload?.data);
@@ -166,7 +166,7 @@ const MyFreelancers = () => {
             <p className=" my-4  font-medium text-2xl">Status</p>
             <div className="w-full  border mt-3 rounded-3xl  bg-[#ffffff] overflow-hidden py-3 px-6">
               {/* Checkbox options */}
-              {["", "inprogress", "completed", "canceled", "invited"].map(
+              {["all", "inprogress", "completed", "canceled", "invited"].map(
                 (status, index) => (
                   <div
                     className="flex items-center my-2"
