@@ -7,8 +7,11 @@ import { MdEdit } from "react-icons/md";
 import { AnimatePresence } from "framer-motion";
 import AddSettingsModal from "../../components/modals/SettingsModal";
 import ProtectedRoute from "../../components/layouts/ProtectedRoute";
+import { useRouter } from "next/router";
+import { SlArrowLeftCircle } from "react-icons/sl";
 
 export default function Profile() {
+   const router = useRouter();
   // Selecting necessary data from Redux store
   const userProfile = useSelector((state) => state.user?.data);
   const isLoading = useSelector((state) => state.user?.loading);
@@ -41,7 +44,13 @@ export default function Profile() {
         </div>
       ) : (
         <div className="mt-28 mx-2 lg:mx-auto max-w-screen-xl">
+          <div className="flex items-center gap-x-4">
+            <SlArrowLeftCircle
+                className="text-primary text-xl cursor-pointer transition-all hover:text-secondary"
+                onClick={() => router.push("/profile/me")}
+              />
           <p className="text-3xl font-medium ">Profile Settings</p>
+          </div>
           <div className="border rounded-3xl w-full my-6 p-6 ">
             <div className="flex items-center justify-between">
               <p className="text-3xl font-medium">Account</p>
