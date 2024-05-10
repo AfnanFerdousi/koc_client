@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IconButton, Stack, Typography } from "@mui/material";
 import StartAodornmentField from "@/components/form/startAodornmentField";
 import PasswordField from "@/components/form/passwordField";
@@ -20,12 +20,12 @@ import { MdHome } from "react-icons/md";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [value, setValue] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [state, setState] = React.useState("login");
-  const [showResendButton, setShowResendButton] = React.useState(true);
-  const [timer, setTimer] = React.useState(60);
-  const [loading, setLoading] = React.useState({
+  const [value, setValue] = useState("");
+  const [password, setPassword] = useState("");
+  const [state, setState] = useState("login");
+  const [showResendButton, setShowResendButton] = useState(true);
+  const [timer, setTimer] = useState(60);
+  const [loading, setLoading] = useState({
     login: false,
     forgetPassword: false,
     resendEmail: false,
@@ -55,7 +55,7 @@ const LoginPage = () => {
         response.payload.statusCode === 201
       ) {
         setLoading({ ...loading, login: false }); // Stop loading
-        router.push("/");
+        router.push("/jobs");
         dispatch(getProfile());
       } else if (response.payload.message === "Verify your email!") {
         setLoading({ ...loading, login: false }); // Stop loading
@@ -87,17 +87,16 @@ const LoginPage = () => {
 
   const handleResendEmail = async () => {
     setShowResendButton(false);
-    setTimer(60);
     setLoading({ ...loading, resendEmail: true }); // Start loading for resend email
+    console.log(value);
     try {
-      const response = await dispatch(resendEmail(value));
+      const response = await dispatch(
+        resendEmail({
+          dynamicParams: { email: value },
+          bodyData: {},
+        })
+      );
       console.log("response here", response);
-      if (
-        response.payload.statusCode === 200 ||
-        response.payload.statusCode === 201
-      ) {
-        toast.success("Email sent successfully!");
-      }
     } catch (error) {
       console.error("Resend email failed:", error);
     } finally {
@@ -105,7 +104,7 @@ const LoginPage = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     let intervalId;
 
     // Start the countdown timer
@@ -125,7 +124,7 @@ const LoginPage = () => {
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
   }, [showResendButton]);
-  React.useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       setState("loggedIn");
@@ -235,8 +234,10 @@ const LoginPage = () => {
                       >
                         Resend email.
                       </span>
+                    ) : loading.resendEmail ? (
+                      "..."
                     ) : (
-                      <span>{`Resend email in ${timer} seconds.`}</span>
+                      <span> {`Resend email in ${timer} seconds.`}</span>
                     )}
                   </Typography>
                 </Stack>

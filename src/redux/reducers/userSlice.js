@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   data: undefined,
   loading: false, // Initialize loading state to false
+  completionPercentage: 0,
 };
 
 export const userSlice = createSlice({
@@ -16,9 +17,13 @@ export const userSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload; // Set loading state
     },
+    setCompletionPercentage: (state, action) => {
+      state.completionPercentage = action.payload;
+    },
   },
 });
 
-export const { setUserData, setLoading } = userSlice.actions;
+export const { setUserData, setLoading, setCompletionPercentage } =
+  userSlice.actions;
 
 export default userSlice.reducer;

@@ -32,7 +32,6 @@ import {
 import { FaRegBookmark, FaRegUserCircle } from "react-icons/fa";
 import { setLoading } from "@/redux/reducers/loadingSlice";
 import { format, formatDistance } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
 import Image from "next/image";
 import Description from "../../components/ui/Description";
 import { AnimatePresence } from "framer-motion";
@@ -87,25 +86,33 @@ const Job = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    dispatch(setLoading(true));
-    dispatch(
-      addProposal({
-        dynamicParams: { userId: userProfile?.user?._id },
-        bodyData: { ...data, offer: id, created_by: userProfile?.user?._id },
-      })
-    )
-      .then(() => {
-        dispatch(getJobById({ userId: userProfile?.user?._id, jobId: id }));
-      })
-      .then(() => {
-        dispatch(setLoading(false));
-        reset();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        dispatch(setLoading(false));
-      });
-    console.log(data);
+    if (
+      userProfile?.description &&
+      userProfile?.hourly_rate &&
+      userProfile?.sub_title
+    ) {
+      dispatch(setLoading(true));
+      dispatch(
+        addProposal({
+          dynamicParams: { userId: userProfile?.user?._id },
+          bodyData: { ...data, offer: id, created_by: userProfile?.user?._id },
+        })
+      )
+        .then(() => {
+          dispatch(getJobById({ userId: userProfile?.user?._id, jobId: id }));
+        })
+        .then(() => {
+          dispatch(setLoading(false));
+          reset();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          dispatch(setLoading(false));
+        });
+    } else {
+      toast.error("Please complete your profile first");
+      router.push("/profile/me");
+    }
   };
 
   const handleAddBookmark = (id) => {
@@ -361,7 +368,7 @@ const Job = () => {
 
                   {jobData?.proposals?.some(
                     (proposal) =>
-                      proposal.created_by._id === userProfile?.user?._id
+                      proposal?.created_by?._id === userProfile?.user?._id
                   ) ? (
                     <p>You have already placed a bid for this job.</p>
                   ) : jobData?.status !== "open" ? (
@@ -495,7 +502,8 @@ const Job = () => {
                     {/* Proposals from the user */}
                     {jobData?.proposals
                       ?.filter(
-                        (item) => item.created_by._id === userProfile?.user?._id
+                        (item) =>
+                          item?.created_by?._id === userProfile?.user?._id
                       )
                       ?.map((item, index) => (
                         <div
@@ -673,7 +681,8 @@ const Job = () => {
                     {/* Other proposals */}
                     {jobData?.proposals
                       ?.filter(
-                        (item) => item.created_by._id !== userProfile?.user?._id
+                        (item) =>
+                          item?.created_by?._id !== userProfile?.user?._id
                       )
                       ?.map((item, index) => (
                         <div
@@ -694,7 +703,11 @@ const Job = () => {
                           <div className="lg:flex space-y-2 lg:space-y-0 items-start justify-between mb-2">
                             <div
                               className="lg:flex items-center gap-x-2 cursor-pointer group"
-                              onClick={() => router.push(`/profile/me`)}
+                              onClick={() =>
+                                router.push(
+                                  `/profile/${item?.created_by?.profile?.user}`
+                                )
+                              }
                             >
                               {item?.created_by?.profile?.user
                                 .profile_picture ? (
@@ -923,23 +936,7 @@ const Job = () => {
                   {jobData?.profile?.city}, {jobData?.profile?.country}
                 </span>
               </p>
-              <p className="flex items-center mt-2">
-                <MdAccessTime className="w-6 h-6 mr-1 -ml-1 text-secondary" />
-                <span className="text-lg text-secondary">
-                  {jobData &&
-                    date &&
-                    date != "Invalid Date" &&
-                    format(
-                      formatInTimeZone(
-                        new Date(),
-                        jobData?.profile?.timezone,
-                        "yyyy-MM-dd HH:mm:ss zzz"
-                      ),
-                      "h:mm a"
-                    )}{" "}
-                  local time
-                </span>
-              </p>
+
               <p className="flex items-center mt-2">
                 <MdJoinInner className="w-6 h-6 mr-1 -ml-1 text-secondary" />
                 <span className="text-lg text-secondary">

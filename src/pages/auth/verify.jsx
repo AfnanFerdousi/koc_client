@@ -1,23 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Grow from "@mui/material/Grow";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { verifyEmail } from "@/axios/axios";
 import toast from "react-hot-toast";
-import { Stack, Typography } from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import Head from "next/head";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [state, setState] = React.useState("");
+  const [state, setState] = useState("");
   const router = useRouter();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleLogin = async () => {
       const { token } = router.query;
       if (token !== undefined) {
         try {
+          setState("loading");
           const response = await dispatch(
             verifyEmail({
               dynamicParams: { token: token },
@@ -31,6 +32,7 @@ const LoginPage = () => {
             setState("verified");
           } else {
             toast.error("Ooops! Something went wrong.");
+            setState("");
           }
         } catch (error) {
           console.error("Login failed:", error);
@@ -57,14 +59,19 @@ const LoginPage = () => {
       <Grow in={true}>
         <Stack direction="row" justifyContent="center">
           {state === "verified" ? (
-            <div className="reset-wrap">
+            <div className="reset-wrap p-6">
               <Stack
                 direction="row"
+                display="flex"
                 justifyContent="start"
                 alignItems="center"
-                marginBottom={2}
+                mb={4}
               >
-                <h4 className="text-xl">You're now verified!</h4>
+                <IconButton
+                  onClick={() => handleClick("login")}
+                  sx={{ marginLeft: "20px" }}
+                ></IconButton>
+                <h4 className="text-xl ">Your email is now verified!</h4>
               </Stack>
               <Stack
                 direction="column"
@@ -73,22 +80,52 @@ const LoginPage = () => {
                 paddingX="45px"
               >
                 <Typography sx={{ color: "#c4c3ca" }}>
-                  You verified your email successfully. You have to login to
-                  continue.
+                  You've successfully verified your email.
                 </Typography>
                 <br />
                 <Typography sx={{ color: "#c4c3ca" }}>
                   <Link
-                    className="auth-change-btn cursor-pointer"
                     href="/auth/login"
+                    className="auth-change-btn cursor-pointer"
                   >
-                    Go To The Login Page
+                    Go to the login page to continue
                   </Link>
                 </Typography>
               </Stack>
             </div>
+          ) : state === "loading" ? (
+            <div className="reset-wrap p-6">
+              <Stack
+                direction="row"
+                display="flex"
+                justifyContent="start"
+                alignItems="center"
+                mb={4}
+              >
+                <IconButton
+                  onClick={() => handleClick("login")}
+                  sx={{ marginLeft: "20px" }}
+                ></IconButton>
+                <h4 className="text-xl ">Please wait a sec....</h4>
+              </Stack>
+              <div className="loader mx-auto"></div>{" "}
+            </div>
           ) : (
-            ""
+            <div className="reset-wrap p-6">
+              <Stack
+                direction="row"
+                display="flex"
+                justifyContent="start"
+                alignItems="center"
+                mb={4}
+              >
+                <IconButton
+                  onClick={() => handleClick("login")}
+                  sx={{ marginLeft: "20px" }}
+                ></IconButton>
+                <h4 className="text-xl ">Oops! Something went wrong</h4>
+              </Stack>
+            </div>
           )}
         </Stack>
       </Grow>

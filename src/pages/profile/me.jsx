@@ -8,6 +8,7 @@ import LeftSideBar from "../../components/profile/LeftSideBar";
 import MainContent from "../../components/profile/MainContent";
 import Experiences from "@/components/profile/Experiences";
 import ProtectedRoute from "../../components/layouts/ProtectedRoute";
+import ProfileCompletion from "../../components/profile/ProfileCompletion";
 
 export default function Profile() {
   // Selecting necessary data from Redux store
@@ -32,6 +33,7 @@ export default function Profile() {
       ) : (
         <>
           <div className="border rounded-3xl max-w-screen-xl mt-28 mx-2 lg:mx-auto">
+            <ProfileCompletion userProfile={userProfile} />
             <ProfileHeader
               isMine={true}
               userProfile={userProfile}

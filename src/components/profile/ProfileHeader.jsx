@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 import { AnimatePresence } from "framer-motion";
 import JobsModal from "../modals/JobsModal";
 import { format } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
 const ProfileHeader = ({ userProfile, isMine }) => {
   const dispatch = useDispatch();
   const [pfpLoading, setPfpLoading] = useState(false);
@@ -74,7 +73,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
                     width={112}
                     height={112}
                     alt="profile picture"
-                    className="object-cover rounded-full"
+                    className="object-cover rounded-full !h-[112px]"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60 transition-opacity opacity-0 hover:opacity-100">
                     <MdEdit className="text-white text-lg" />
@@ -98,7 +97,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               htmlFor="pfpUpload"
             >
               {pfpLoading ? (
-                <div className="flex items-center justify-center  w-full h-full">
+                <div className="flex items-center bg-white border rounded-full justify-center  w-full h-full">
                   <div className="loader"></div>
                 </div>
               ) : (
@@ -129,7 +128,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               width={112}
               height={112}
               alt="profile picture"
-              className="object-cover"
+              className="object-cover rounded-full !h-[112px]"
             />
           </div>
         ) : (
@@ -167,18 +166,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
           <p className="flex items-center mt-2">
             <MdOutlineLocationOn className="w-6 h-6 mr-1 -ml-1 text-secondary" />
             <span className="text-lg text-secondary">
-              {userProfile?.city}, {userProfile?.country} -{" "}
-              {userProfile &&
-                new Date(userProfile?.createdAt) != "Invalid Date" &&
-                format(
-                  formatInTimeZone(
-                    new Date(),
-                    userProfile?.timezone,
-                    "yyyy-MM-dd HH:mm:ss zzz"
-                  ),
-                  "h:mm a"
-                )}{" "}
-              local time
+              {userProfile?.city}, {userProfile?.country}
             </span>
           </p>
           <p className="flex items-center ">
@@ -228,7 +216,16 @@ const ProfileHeader = ({ userProfile, isMine }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 if (userProfile) {
-                  setShowHireNowModal(item?.user?._id);
+                  if (
+                    userProfile?.description &&
+                    userProfile?.hourly_rate &&
+                    userProfile?.sub_title
+                  ) {
+                    setShowHireNowModal(userProfile?.user?._id);
+                  } else {
+                    toast.error("Please complete your profile first");
+                    router.push("/profile/me");
+                  }
                 } else {
                   router.push("/auth/login");
                 }

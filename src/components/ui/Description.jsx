@@ -102,7 +102,7 @@ const Description = ({
   };
 
   return (
-    <p className={`${className}`} ref={descriptionRef}>
+    <p className={`${className} break-all`} ref={descriptionRef}>
       {renderDescription()}
     </p>
   );

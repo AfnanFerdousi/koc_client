@@ -20,12 +20,12 @@ import Select from "react-tailwindcss-select";
 import { LockReset } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { editInfo } from "../../axios/axios";
+import { turkishCities } from "../../constants/data";
 
 const SignupPage = () => {
   // State variables
   const [state, setState] = useState("signup");
 
-  const [showResendButton, setShowResendButton] = useState(true);
   const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState({
     signup: false,
@@ -34,9 +34,6 @@ const SignupPage = () => {
     info: false,
   });
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [countriesOptions, setCountriesOptions] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [characterCount, setCharacterCount] = useState(0);
@@ -60,16 +57,6 @@ const SignupPage = () => {
     const fetchData = async () => {
       setLoading({ ...loading, fetchData: true });
       try {
-        // Fetch countries data
-        const countriesResponse = await dispatch(getCountries());
-        setCountriesOptions(
-          countriesResponse?.payload?.data?.map((item) => ({
-            value: item.name,
-            label: item.name ?? "",
-            cities: item.cities,
-          }))
-        );
-
         // Fetch categories data
         const categoriesResponse = await dispatch(getCategories(""));
         setCategoryOptions(
@@ -87,30 +74,6 @@ const SignupPage = () => {
     fetchData();
   }, [dispatch]);
 
-  // Update cities based on selected country
-  useEffect(() => {
-    if (selectedCountry) {
-      const country = countriesOptions.find(
-        (c) => c.value === selectedCountry.value
-      );
-      setCities(
-        country
-          ? country?.cities?.map((city) => ({ value: city, label: city }))
-          : []
-      );
-    }
-  }, [selectedCountry, countriesOptions]);
-
-  // Clear selected city if not available in selected country
-  useEffect(() => {
-    if (
-      selectedCountry &&
-      !selectedCountry?.cities?.includes(selectedCity?.value)
-    ) {
-      setSelectedCity("");
-    }
-  }, [selectedCountry, countriesOptions, selectedCity?.value]);
-
   // Handle form submission
   const onsubmit = async (data) => {
     setLoading({ ...loading, signup: true });
@@ -121,7 +84,7 @@ const SignupPage = () => {
           dynamicParams: {},
           bodyData: {
             ...data,
-            country: selectedCountry.value,
+            country: "Turkey",
             city: selectedCity.value,
             category: selectedCategory.value,
             role: "user",
@@ -135,6 +98,15 @@ const SignupPage = () => {
         setUserId(response.payload.data._id);
         setUserEmail(data.email);
         setState("info");
+        dispatch(postInitiateChat(response.payload.data._id))
+          .then((response) => {
+            // Handle successful response
+            console.log("API call successful:", response);
+          })
+          .catch((error) => {
+            // Handle error
+            console.error("API call failed:", error);
+          });
       }
     } catch (error) {
       console.error("Registration failed:", error);
@@ -175,7 +147,6 @@ const SignupPage = () => {
   };
   // Handle resending verification email
   const handleResendEmail = async () => {
-    setShowResendButton(false);
     setLoading({ ...loading, resendEmail: true });
     try {
       const response = await dispatch(
@@ -325,53 +296,31 @@ const SignupPage = () => {
                         >
                           Country
                         </label>
-                        <Select
-                          value={selectedCountry}
-                          onChange={(e) => setSelectedCountry(e)}
-                          options={countriesOptions}
-                          isSearchable
-                          // loading={loading.signup}
-                          primaryColor={"lime"}
-                          placeholder="Select Country"
-                          classNames={{
-                            menuButton: ({ isDisabled }) =>
-                              `flex rounded-lg text-gray-100 my-1 border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
-                                isDisabled
-                                  ? "text-gray-400"
-                                  : "bg-[#1f2029] hover:border-gray-400 focus:border-primary focus:ring focus:ring-primary/10"
-                              }`,
-                            menu: "absolute z-10 w-full bg-[#1f2029] shadow-lg  rounded py-2 mt-1.5 rounded-lg text-gray-300",
-                            listItem: ({ isSelected }) =>
-                              `block transition duration-200 p-2 rounded-lg cursor-pointer select-none truncate rounded text-gray-300 ${
-                                isSelected
-                                  ? `bg-gray-300 text-gray-900`
-                                  : `hover:bg-gray-300 hover:text-gray-900`
-                              }`,
-                          }}
+                        <input
+                          type="text"
+                          id="country"
+                          name="country"
+                          className=" bg-[#1f2029] my-1  text-base border-none rounded-md border  p-3 w-full !outline-none  font-poppins"
+                          placeholder="Country"
+                          value="Turkey"
+                          disabled
                         />
-                        {!selectedCountry && (
-                          <span className="w-full text-red-400  -mt-1 cursor-context-menu">
-                            This field is required
-                          </span>
-                        )}
                       </div>
                       <div className="w-full">
                         <label
                           htmlFor="city"
                           className="col-span-full font-medium my-1"
                         >
-                          City
+                          Province
                         </label>
                         <div className="relative">
                           <Select
                             value={selectedCity}
                             onChange={(e) => setSelectedCity(e)}
-                            options={cities}
-                            isDisabled={cities?.length === 0}
+                            options={turkishCities}
                             isSearchable
-                            // loading={loading.signup}
                             primaryColor={"lime"}
-                            placeholder="Select Your City"
+                            placeholder="Select Your Province"
                             classNames={{
                               menuButton: ({ isDisabled }) =>
                                 `flex rounded-lg text-gray-100 my-1 border border-[#1f2029] p-[2px] shadow-sm transition-all duration-300 focus:outline-none ${
@@ -411,7 +360,7 @@ const SignupPage = () => {
                           name="phone_number"
                           {...register("phone_number", { required: true })}
                           className=" mx-2 bg-[#1f2029]  text-base border-none  w-full !outline-none  font-poppins"
-                          placeholder="Your Phone Number"
+                          placeholder="Ex. +90 5xxxxxxxxx"
                         />
                       </div>
                     </div>
@@ -435,7 +384,7 @@ const SignupPage = () => {
                           name="email"
                           {...register("email", { required: true })}
                           className=" mx-2 bg-[#1f2029]  text-base border-none  w-full !outline-none  font-poppins"
-                          placeholder="Email Address"
+                          placeholder="Ex. example@gmail.com"
                         />
                       </div>
                     </div>
@@ -484,6 +433,7 @@ const SignupPage = () => {
                             className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border  transition-all before:absolute checked:border-[#1f2029] checked:bg-[#1f2029]"
                             checked={isChecked}
                             onChange={(e) => setIsChecked(!isChecked)}
+                            required
                           />
                           <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
                             <svg
@@ -510,50 +460,6 @@ const SignupPage = () => {
                         >
                           Kullanıcı Sözleşmesi
                         </Link>
-                        .
-                      </p>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="inline-flex items-center">
-                        <label
-                          className="relative flex cursor-pointer items-center rounded-full p-2"
-                          htmlFor="checkbox-1"
-                          data-ripple-dark="true"
-                        >
-                          <input
-                            type="checkbox"
-                            id="checkbox-1"
-                            className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border  transition-all before:absolute checked:border-[#1f2029] checked:bg-[#1f2029]"
-                            checked={isChecked}
-                            onChange={(e) => setIsChecked(!isChecked)}
-                          />
-                          <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3.5 w-3.5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              stroke="currentColor"
-                              strokeWidth={1}
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        </label>
-                      </div>
-                      <p className="text-base">
-                        
-                        <Link
-                          className="underline font-medium cursor-pointer hover:no-underline"
-                          href="/privacy"
-                        >
-                          KVKK Aydınlatma Metni
-                        </Link>
-                        .
                       </p>
                     </div>
                   </Stack>

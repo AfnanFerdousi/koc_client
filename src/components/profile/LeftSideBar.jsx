@@ -13,6 +13,7 @@ import LanguageModal from "../modals/LanguageModal";
 import DeleteModal from "../modals/DeleteModal";
 import { setLoading } from "@/redux/reducers/loadingSlice";
 import { deleteEducation, deleteLanguage } from "../../axios/axios";
+import OtpModal from "../modals/OtpModal";
 
 const ProfileHeader = ({ userProfile, isMine }) => {
   // State variables for modals
@@ -37,6 +38,7 @@ const ProfileHeader = ({ userProfile, isMine }) => {
     description: "",
   });
 
+  const [otpModal, setOtpModal] = useState(false);
   // Redux state for loading
   const loading = useSelector((state) => state.loading.loading);
   const dispatch = useDispatch();
@@ -190,9 +192,9 @@ const ProfileHeader = ({ userProfile, isMine }) => {
             },
           ].map((item, index) => (
             <p key={index} className="font-medium mb-2 flex items-center ">
-              <span className="whitespace-nowrap">{item.label}</span>:{" "}
+              <span className="whitespace-nowrap ">{item.label}</span>:{" "}
               {item.data ? (
-                <span className="mx-1 font-normal overflow-x-clip">
+                <span className="mx-1 font-normal overflow-x-scroll no-scrollbar">
                   {item.data}
                 </span>
               ) : (
@@ -206,23 +208,40 @@ const ProfileHeader = ({ userProfile, isMine }) => {
           <p className="text-2xl font-semibold mb-2">Verifications</p>
           {[
             { label: "Email", verified: userProfile?.user?.is_verified },
-            // { label: "Phone", verified: userProfile?.phone_verified },
-            // { label: "Payment", verified: userProfile?.payment_verified },
+            { label: "Phone", verified: userProfile?.phone_verified },
+            { label: "Payment", verified: userProfile?.payment_verified },
           ].map((verification, index) => (
-            <p key={index} className="font-medium mb-2 flex items-center ">
-              {verification.label}:{" "}
-              {verification.verified ? (
-                <>
-                  <span className="mx-1 font-normal">Verified</span>
-                  <RiVerifiedBadgeFill />
-                </>
-              ) : (
-                <>
-                  <span className="mx-1 font-normal">Unverified</span>
-                  <RxCrossCircled />
-                </>
+            <div
+              className="flex items-center justify-between w-full"
+              key={index}
+            >
+              <p className="font-medium mb-2 flex items-center ">
+                {verification.label}:{" "}
+                {verification.verified ? (
+                  <>
+                    <span className="mx-1 font-normal">Verified</span>
+                    <RiVerifiedBadgeFill />
+                  </>
+                ) : (
+                  <>
+                    <span className="mx-1 font-normal">Unverified</span>
+                    <RxCrossCircled />
+                  </>
+                )}
+              </p>
+              {!verification.verified && (
+                <p
+                  className="text-primary hover:underline cursor-pointer "
+                  onClick={() => {
+                    if (verification.label === "Phone") {
+                      setOtpModal(true);
+                    }
+                  }}
+                >
+                  Verify
+                </p>
               )}
-            </p>
+            </div>
           ))}
         </div>
 
@@ -350,6 +369,13 @@ const ProfileHeader = ({ userProfile, isMine }) => {
             loading={loading}
             onClose={() => setShowDeleteEducationModal(null)}
             onConfirm={() => handleDeleteEducation()}
+          />
+        )}
+        {otpModal && (
+          <OtpModal
+            setOtpModal={setOtpModal}
+            otpModal={otpModal}
+            userProfile={userProfile}
           />
         )}
       </AnimatePresence>

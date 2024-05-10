@@ -17,6 +17,11 @@ const config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        fontFamily: {
+          footerFont: ["Nothing You Could Do", "cursive", "sans-serif"],
+        },
+      },
     },
   },
   plugins: [],

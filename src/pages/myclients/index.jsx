@@ -204,9 +204,8 @@ const MyFreelancers = () => {
                       </div>
                     </label>
                     <p className="text-secondary font-medium">
-                      {status
-                        ? status.charAt(0).toUpperCase() + status.slice(1)
-                        : "All"}
+                      {status &&
+                        status.charAt(0).toUpperCase() + status.slice(1)}
                     </p>
                   </div>
                 )
@@ -489,9 +488,7 @@ const MyFreelancers = () => {
                     </div>
                   </label>
                   <p className="text-secondary font-medium">
-                    {status
-                      ? status.charAt(0).toUpperCase() + status.slice(1)
-                      : "All"}
+                    {status && status.charAt(0).toUpperCase() + status.slice(1)}
                   </p>
                 </div>
               )

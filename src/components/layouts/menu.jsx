@@ -2,7 +2,7 @@ import Logout from "@mui/icons-material/Logout";
 import Settings from "@mui/icons-material/Settings";
 import Avatar from "@mui/material/Avatar";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import Divider from "@mui/material/Divider";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Grow from "@mui/material/Grow";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -28,6 +28,7 @@ const AccountMenu = () => {
 
   const userProfile = useSelector((state) => state.user.data);
   const userLoading = useSelector((state) => state.user.loading);
+  const percentage = useSelector((state) => state.user.completionPercentage);
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,17 +64,24 @@ const AccountMenu = () => {
 
     setOpen1(false);
   };
+  const [open2, setOpen2] = useState(false);
+  const anchorRef2 = useRef(null);
+  const handleToggle2 = () => {
+    setOpen2((prevOpen2) => !prevOpen2);
+    handleRefresh();
+  };
+
+  const handleClose2 = (event) => {
+    if (anchorRef2.current && anchorRef2.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen2(false);
+  };
 
   const handleProfile = (e) => {
     router.push(`/profile/me`, { scroll: false });
     handleClose(e);
-  };
-
-  const handleLogout = (event) => {
-    handleClose(event);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userId");
-    router.push(`/auth/login`);
   };
 
   function handleListKeyDown(event) {
@@ -255,9 +263,10 @@ const AccountMenu = () => {
                           tabIndex={0}
                           className="focus:outline-none text-sm flex flex-shrink-0 leading-normal px-3 py-8 text-secondary"
                         >
-                          {notifications?.length > 1
-                            ? "That's it for now"
-                            : "No notifications found"}
+                          {!loading &&
+                            (notifications?.length > 1
+                              ? "That's it for now"
+                              : "No notifications found")}
                         </p>
                         <hr className="w-full" />
                       </div>
@@ -269,6 +278,108 @@ const AccountMenu = () => {
           )}
         </Popper>
       </div>
+      <div>
+        <IconButton
+          ref={anchorRef2}
+          id="account-button"
+          aria-controls={open2 ? "account-menu" : undefined}
+          aria-expanded={open2 ? "true" : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle2}
+        >
+          <ErrorOutlineIcon
+            sx={{
+              width: 32,
+              height: 32,
+              color: "#F87171",
+            }}
+          />
+        </IconButton>
+        <Popper
+          open={open2}
+          anchorEl={anchorRef2.current}
+          role={undefined}
+          placement="bottom-start"
+          transition
+          disablePortal
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === "bottom-start" ? "left top" : "left bottom",
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleClose2}>
+                  <MenuList
+                    autoFocusItem={open2}
+                    id="composition-menu"
+                    aria-labelledby="composition-button"
+                    onKeyDown={handleListKeyDown}
+                    className="w-60  bg-gray-50 rounded-3xl"
+                  >
+                    {!userLoading ? (
+                      <MenuItem
+                        onClick={(e) => handleProfile(e)}
+                        className="flex flex-col "
+                      >
+                        <div className="w-[120px] h-[120px] rounded-full ">
+                          <div className="relative size-[120px]">
+                            <svg
+                              className="size-full"
+                              width="36"
+                              height="36"
+                              viewBox="0 0 36 36"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="16"
+                                fill="none"
+                                className="stroke-current text-primary "
+                                strokeWidth="2"
+                              ></circle>
+                              <g className="origin-center -rotate-90 transform">
+                                <circle
+                                  cx="18"
+                                  cy="18"
+                                  r="16"
+                                  fill="none"
+                                  className="stroke-current text-red-300 -500"
+                                  strokeWidth="2"
+                                  strokeDasharray="100"
+                                  strokeDashoffset={percentage}
+                                ></circle>
+                              </g>
+                            </svg>
+                            <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                              <span className="text-center text-xl font-bold text-gray-700 ">
+                                {percentage}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="text-secondary text-xl my-1 font-medium">
+                          Complete your profile
+                        </p>
+                      </MenuItem>
+                    ) : (
+                      <div className="flex items-center col-span-1 lg:col-span-3 justify-center h-[30vh] mx-auto">
+                        <div className="loader"></div>
+                      </div>
+                    )}
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+      </div>
+
       <div>
         <IconButton
           ref={anchorRef}
@@ -295,7 +406,7 @@ const AccountMenu = () => {
                 height: 32,
                 backgroundColor: "#35B900",
                 color: "white",
-                fontSize: 16,
+                fontSize: 12,
               }}
             >
               {(userProfile?.user?.first_name?.slice(0, 1) ?? "") +
@@ -393,6 +504,7 @@ const AccountMenu = () => {
           )}
         </Popper>
       </div>
+
       <AnimatePresence initial={false} onExitComplete={() => null}>
         {showConfirmationModal && (
           <ConfirmationModal
@@ -400,10 +512,11 @@ const AccountMenu = () => {
             loading={loading || userLoading}
             onClose={() => setShowConfirmationModal(false)}
             onConfirm={() => {
+              setLoading(true);
               localStorage.removeItem("accessToken");
               localStorage.removeItem("userId");
-              router.reload();
-              router.push("/login");
+              setLoading(false);
+              router.push("/auth/login");
             }}
           />
         )}

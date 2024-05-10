@@ -18,9 +18,12 @@ import { setLoading } from "../../redux/reducers/loadingSlice";
 import ProtectedRoute from "../../components/layouts/ProtectedRoute";
 import Select from "react-tailwindcss-select";
 import Image from "next/image";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const Jobs = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [activeJobs, setActiveJobs] = useState("bestMatches");
   const loading = useSelector((state) => state.loading.loading);
   const userProfile = useSelector((state) => state.user.data);
@@ -186,7 +189,18 @@ const Jobs = () => {
           </div>
           <button
             className="block lg:hidden rounded-3xl my-3  w-full py-3 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95 "
-            onClick={() => setShowAddJobModal(true)}
+            onClick={() => {
+              if (
+                userProfile?.description &&
+                userProfile?.hourly_rate &&
+                userProfile?.sub_title
+              ) {
+                setShowAddJobModal(true);
+              } else {
+                toast.error("Please complete your profile first");
+                router.push("/profile/me");
+              }
+            }}
           >
             Post a new job
           </button>
@@ -664,7 +678,18 @@ const Jobs = () => {
         <div className="lg:block hidden col-span-1">
           <button
             className=" rounded-3xl  w-full py-3 bg-primary hover:bg-opacity-90 transition-all border text-white text-center active:scale-95 "
-            onClick={() => setShowAddJobModal(true)}
+            onClick={() => {
+              if (
+                userProfile?.description &&
+                userProfile?.hourly_rate &&
+                userProfile?.sub_title
+              ) {
+                setShowAddJobModal(true);
+              } else {
+                toast.error("Please complete your profile first");
+                router.push("/profile/me");
+              }
+            }}
           >
             Post a new job
           </button>
