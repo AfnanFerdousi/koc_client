@@ -2,6 +2,7 @@ import { setLoading, setUserData } from "@/redux/reducers/userSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Axios from "axios";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie"
 
 // Base URL for API requests
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -65,6 +66,7 @@ export const asyncThunkCreator = (
         if (name === "auth/loginUser") {
           localStorage.setItem("accessToken", response.data.data.accessToken);
           localStorage.setItem("userId", response.data.data.user_id);
+          Cookies.set("userId", response.data.data.user_id);
         }
 
         // Show success toast if provided
